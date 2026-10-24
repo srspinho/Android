@@ -1,0 +1,8 @@
+# Cache e arquivos gerados pelo Godot
+.godot/
+/android/
+build/
+*.apk
+*.aab
+*.keystore
+export_credentials.cfg
