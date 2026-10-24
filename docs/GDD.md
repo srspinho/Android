@@ -20,11 +20,19 @@ Ele vai atravessar a região até a torre da Serpentis e desligar tudo.
 
 ## Estilo visual
 
-- Pixel art com paleta de neon: rosa `#ff2bd6`, ciano `#00f0ff`, amarelo `#ffd000`
-  e verde tóxico `#39ff14`, sobre roxos escuros
-- Chuva ácida constante, letreiros, postes com cone de luz e outdoors holográficos
+Inspirado no **Duke Nukem II** (1993), com tema cyberpunk:
+
+- Pixel art em 384×216, ampliada sem borrar, com paleta no espírito da EGA/VGA:
+  cinzas metálicos, amarelo e preto das faixas de perigo, e os neons rosa `#fc54fc`,
+  ciano `#54fcfc` e verde tóxico `#54fc54`
+- Blocos de metal com chanfro, rebites, caixas com X, grades de ventilação e pilares;
+  a parte de cima de cada chão tem faixa zebrada
+- Personagens com contorno preto e sombreado de 2 a 3 tons
+- Áreas internas com parede industrial de painéis cinza e azuis, como nas bases do
+  Duke Nukem II; áreas externas com a cidade em parallax, chuva e letreiros de neon
+- HUD com moldura de canos: painel lateral (ITENS, retrato, RADAR, FASE) e barra
+  inferior (PONTOS, ARMA, ENERGIA)
 - Pontos reais do bairro como referência, todos "futurizados"
-- Resolução interna de 640×360, ampliada sem borrar (pixels nítidos)
 
 ## Mapa da campanha
 
@@ -88,4 +96,4 @@ turbinado (velocidade), segredos com bônus como no Duke Nukem.
 3. Fase 2 (Instituto Butantan) e o primeiro chefe
 4. Tela de título, pausa e salvamento do progresso
 5. Mapa do bairro entre as fases
-6. Trocar os gráficos desenhados por código por sprites de pixel art (feitos no Aseprite ou no LibreSprite)
+6. Mais quadros de animação (tiro, dano, morte) e explosões em pixel art

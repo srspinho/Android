@@ -19,15 +19,13 @@ const JUMP_BUFFER_TIME := 0.12
 const MASK_NORMAL := 1 | 16
 const MASK_PASS := 1
 
-const C_JACKET := Color("#1b1035")
-const C_PINK := Color("#ff2bd6")
-const C_VISOR := Color("#00f0ff")
-const C_SKIN := Color("#c98b5e")
-const C_HAIR := Color("#7a2cff")
-const C_PANTS := Color("#2a2a48")
-const C_BOOTS := Color("#0d0d14")
-const C_METAL := Color("#9aa4b8")
-const C_GUN := Color("#4a5068")
+const HERO := preload("res://art/hero.png")
+const HudScript := preload("res://scripts/hud.gd")
+# Quadros de art/hero.png
+const F_STAND := 0
+const F_RUN := [1, 2, 1, 3]
+const F_JUMP := 4
+const F_CLIMB := [5, 6]
 
 var main
 var max_hp := 8
@@ -46,6 +44,7 @@ var _drop_timer := 0.0
 var _climbing := false
 var _anim := 0.0
 var _muzzle := 0.0
+var _sprite: Sprite2D
 
 
 func _ready() -> void:
@@ -54,18 +53,26 @@ func _ready() -> void:
 	floor_snap_length = 4.0
 	var cs := CollisionShape2D.new()
 	var rect := RectangleShape2D.new()
-	rect.size = Vector2(10, 22)
+	rect.size = Vector2(12, 28)
 	cs.shape = rect
-	cs.position = Vector2(0, -11)
+	cs.position = Vector2(0, -14)
 	add_child(cs)
+
+	_sprite = Sprite2D.new()
+	_sprite.texture = HERO
+	_sprite.hframes = 7
+	_sprite.position = Vector2(0, -16)
+	add_child(_sprite)
 
 	var size: Vector2i = main.level_pixel_size()
 	var cam := Camera2D.new()
-	cam.position = Vector2(0, -24)
+	# O HUD cobre a direita e a parte de baixo da tela: a câmera compensa
+	# para o herói ficar no meio da área de jogo.
+	cam.position = Vector2(HudScript.PANEL_W / 2.0, -20 + HudScript.BAR_H / 2.0)
 	cam.limit_left = 0
 	cam.limit_top = 0
-	cam.limit_right = size.x
-	cam.limit_bottom = size.y
+	cam.limit_right = size.x + HudScript.PANEL_W
+	cam.limit_bottom = size.y + HudScript.BAR_H
 	cam.position_smoothing_enabled = true
 	cam.position_smoothing_speed = 8.0
 	add_child(cam)
@@ -85,7 +92,7 @@ func _physics_process(delta: float) -> void:
 		velocity.x = move_toward(velocity.x, 0.0, FRICTION * delta)
 		velocity.y = minf(velocity.y + GRAVITY * delta, MAX_FALL)
 		move_and_slide()
-		queue_redraw()
+		_animate()
 		return
 
 	var dir := Input.get_axis("move_left", "move_right")
@@ -111,7 +118,7 @@ func _physics_process(delta: float) -> void:
 
 	if Input.is_action_pressed("shoot") and _shoot_cd <= 0.0 and not _climbing:
 		_shoot()
-	queue_redraw()
+	_animate()
 
 
 func _process_climb(dir: float, vdir: float, ladder_here: bool, ladder_below: bool) -> void:
@@ -166,7 +173,7 @@ func _shoot() -> void:
 	b.main = main
 	b.from_player = true
 	b.direction = Vector2(facing, 0)
-	b.position = global_position + Vector2(facing * 13, -15)
+	b.position = global_position + Vector2(facing * 12, -17)
 	main.world.add_child(b)
 
 
@@ -177,10 +184,10 @@ func hurt(amount: int) -> void:
 	_invuln = 1.2
 	_climbing = false
 	velocity = Vector2(-facing * 100.0, -160.0)
-	main.spawn_fx(global_position + Vector2(0, -12), C_PINK, 10.0)
+	main.spawn_fx(global_position + Vector2(0, -14), Color("#ff2bd6"), 10.0)
 	if hp == 0:
 		dead = true
-		main.spawn_fx(global_position + Vector2(0, -12), C_VISOR, 24.0)
+		main.spawn_fx(global_position + Vector2(0, -14), Color("#54fcfc"), 24.0)
 		visible = false
 		died.emit()
 
@@ -191,51 +198,23 @@ func heal(amount: int) -> void:
 
 # --- Desenho ----------------------------------------------------------------
 
-## Retângulo espelhado conforme o lado para onde o herói olha.
-func _r(x: float, y: float, w: float, h: float, c: Color) -> void:
-	if facing < 0:
-		x = -x - w
-	draw_rect(Rect2(x, y, w, h), c)
+func _animate() -> void:
+	_sprite.visible = not (_invuln > 0.0 and int(_invuln * 20.0) % 2 == 0)
+	_sprite.flip_h = facing < 0
+	if _climbing:
+		_sprite.frame = F_CLIMB[int(global_position.y / 8.0) % 2]
+	elif not is_on_floor():
+		_sprite.frame = F_JUMP
+	elif absf(velocity.x) > 10.0:
+		_sprite.frame = F_RUN[int(_anim * 10.0) % F_RUN.size()]
+	else:
+		_sprite.frame = F_STAND
+	queue_redraw()
 
 
 func _draw() -> void:
-	if _invuln > 0.0 and int(_invuln * 20.0) % 2 == 0:
-		return
-	var step := 0.0
-	if _climbing:
-		step = sin(global_position.y * 0.3) * 2.0
-	elif is_on_floor() and absf(velocity.x) > 10.0:
-		step = sin(_anim * 16.0) * 2.0
-	elif not is_on_floor():
-		step = 2.0
-
-	# Pernas e botas
-	_r(-4 + step, -9, 3, 7, C_PANTS)
-	_r(1 - step, -9, 3, 7, C_PANTS)
-	_r(-5 + step, -2, 4, 2, C_BOOTS)
-	_r(1 - step, -2, 4, 2, C_BOOTS)
-	# Jaqueta com detalhes em neon
-	_r(-5, -19, 10, 10, C_JACKET)
-	_r(-5, -19, 1, 10, C_PINK)
-	_r(-5, -10, 10, 1, C_PINK)
-	_r(0, -17, 1, 6, Color(C_VISOR, 0.6))
-	# Cabeça, moicano e visor
-	_r(-3, -25, 7, 6, C_SKIN)
-	_r(-4, -27, 6, 3, C_HAIR)
-	_r(-2, -30, 3, 3, C_PINK)
-	_r(1, -24, 4, 2, C_VISOR)
-	# Brilho do visor
-	_r(4, -25, 3, 4, Color(C_VISOR, 0.25))
-
-	if _climbing:
-		_r(-6, -26 + step, 3, 9, C_METAL)
-		_r(4, -26 - step, 3, 9, C_SKIN)
-		return
-	# Braço cibernético e blaster
-	_r(1, -17, 7, 3, C_METAL)
-	_r(6, -18, 7, 4, C_GUN)
-	_r(11, -17, 2, 1, C_VISOR)
-	if _muzzle > 0.0:
-		var tip := Vector2(15 * facing, -16)
-		draw_circle(tip, 4.0, Color(C_VISOR, 0.5))
-		draw_circle(tip, 2.0, Color.WHITE)
+	# Clarão do tiro na ponta do blaster
+	if _muzzle > 0.0 and _sprite.visible:
+		var tip := Vector2(facing * 13, -17)
+		draw_rect(Rect2(tip - Vector2(3, 3), Vector2(6, 6)), Color("#54fcfc"))
+		draw_rect(Rect2(tip - Vector2(1, 1), Vector2(3, 3)), Color.WHITE)

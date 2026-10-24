@@ -264,6 +264,10 @@ func _spawn(script: GDScript, pos: Vector2) -> void:
 
 # --- Jogo -------------------------------------------------------------------
 
+func level_number() -> int:
+	return current_level + 1
+
+
 func get_score() -> int:
 	return score
 
@@ -287,16 +291,16 @@ func level_complete() -> void:
 	player.frozen = true
 	if current_level + 1 < LEVELS.size():
 		_next_action = "next"
-		hud.show_overlay("FASE CONCLUÍDA!", "Toque ou aperte ENTER para continuar")
+		hud.show_overlay("FASE CONCLUÍDA!", "Toque ou aperte ENTER\npara continuar")
 	else:
 		_next_action = "end"
-		hud.show_overlay("FIM DA DEMO!", "Fase 2 – Instituto Butantan – em construção.\nToque ou aperte ENTER para jogar de novo")
+		hud.show_overlay("FIM DA DEMO!", "Fase 2 – Instituto Butantan – em construção.\n\nToque ou aperte ENTER\npara jogar de novo")
 
 
 func _on_player_died() -> void:
 	_finished = true
 	_next_action = "retry"
-	hud.show_overlay("SISTEMA DESLIGADO", "Toque ou aperte ENTER para tentar de novo")
+	hud.show_overlay("SISTEMA DESLIGADO", "Toque ou aperte ENTER\npara tentar de novo")
 
 
 func _continue() -> void:

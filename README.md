@@ -1,10 +1,12 @@
 # Neon Butantã
 
-Jogo de plataforma e tiro 2D no estilo do clássico **Duke Nukem** (1991), com visual
-**cyberpunk** e fases baseadas na região do **Butantã / Rio Pequeno**, em São Paulo.
+Jogo de plataforma e tiro 2D no estilo do clássico **Duke Nukem II** (1993), com
+pixel art e HUD no estilo dos jogos de PC daquela época, tema **cyberpunk** e fases
+baseadas na região do **Butantã / Rio Pequeno**, em São Paulo.
 Feito em **Godot 4** para **Android**, mas também roda no PC.
 
 ![Rua](docs/screenshots/rua.png)
+![Prédio](docs/screenshots/predio.png)
 ![Metrô](docs/screenshots/metro.png)
 
 ## O que já funciona (demo da Fase 1 – Estação Butantã)
@@ -13,9 +15,12 @@ Feito em **Godot 4** para **Android**, mas também roda no PC.
 - Inimigos: androide de segurança, drone de vigilância e cobra cibernética
 - Itens: coxinha energética (vida), cartão de acesso vermelho, turbo no blaster, chips de dados (pontos)
 - Porta de laser que só abre com o cartão, lodo tóxico, trilho energizado
-- Fundo com parallax (Torre do Relógio da USP ao longe), chuva e letreiros de neon
-- HUD (energia, créditos, itens) e controles de toque na tela
-- Todos os gráficos são desenhados por código, então não há imagens para baixar
+- Pixel art no estilo Duke Nukem II: blocos de metal com faixas zebradas, caixas, painéis
+  industriais ao fundo e contorno preto nos personagens
+- Fundo da cidade com parallax (Torre do Relógio da USP ao longe), chuva e letreiros de neon
+- HUD com moldura de canos: itens, retrato do herói, radar de inimigos, fase, pontos,
+  arma e energia
+- Fonte pixelada própria (com acentos) e controles de toque na tela
 
 ## Como abrir e jogar no PC
 
@@ -54,6 +59,28 @@ Depois disso:
 Também dá para ligar o celular no USB com a **Depuração USB** ativa. Aí aparece um
 ícone do Android no canto do editor, e um clique instala e roda o jogo direto no aparelho.
 
+## Gráficos (pasta `art/`)
+
+Todos os PNGs da pasta `art/` são gerados pelo script `tools/gen_art.py`. Os
+personagens e itens estão desenhados lá com letras (cada letra é uma cor da paleta),
+e o contorno preto é colocado automaticamente. Para mudar um desenho:
+
+- **Pelo script:** edite as letras e rode `python3 tools/gen_art.py` (precisa do
+  Python 3 com `pip install pillow`).
+- **Direto no PNG:** abra a imagem no Aseprite, LibreSprite ou Piskel e mantenha o mesmo
+  tamanho de quadro. Nesse caso, não rode o script de novo, ou ele sobrescreve a imagem.
+
+| Arquivo | Conteúdo |
+|---|---|
+| `hero.png` | Herói: parado, 3 de corrida, pulo e 2 de escada (32×32 cada) |
+| `guard.png`, `drone.png`, `snake.png` | Inimigos (2 quadros cada) |
+| `items.png`, `exit.png` | Itens e porta de saída |
+| `tiles.png` | Blocos 16×16 (a ordem está em `scripts/level_art.gd`) |
+| `bg_*.png` | Fundos: céu, prédios distantes, prédios próximos e parede industrial |
+| `portrait.png`, `font.png`, `lamp.png` | Retrato do HUD, fonte e poste |
+
+O jogo roda em 384×216 pixels e é ampliado para a tela, como os jogos de 1993.
+
 ## Como criar ou editar fases
 
 As fases ficam em `levels/` e são desenhadas com caracteres, um por bloco de 16×16 px.
@@ -67,18 +94,21 @@ Dica: o pulo alcança 3 blocos de altura e uns 4 de distância.
 ## Estrutura
 
 ```
-project.godot          configuração (resolução 640x360, paisagem, renderizador mobile)
+project.godot          configuração (resolução 384x216, paisagem, renderizador mobile)
+art/                   pixel art (PNG) gerada por tools/gen_art.py
+tools/gen_art.py       gerador da pixel art
 scenes/main.tscn       cena principal
 scripts/main.gd        lê o mapa, cria colisões e entidades, controla morte/vitória
 scripts/player.gd      herói: movimento, escada, tiro, dano
 scripts/enemy_*.gd     inimigos (base + segurança, drone, cobra)
 scripts/pickup.gd      itens e saída
 scripts/door.gd        porta de laser
-scripts/level_art.gd   desenho dos blocos, túnel, escadas e letreiros
+scripts/level_art.gd   desenho dos blocos, parede de fundo, escadas e letreiros
 scripts/hazard_art.gd  lodo tóxico e trilho energizado animados
 scripts/background.gd  céu e prédios com parallax
 scripts/rain.gd        chuva
-scripts/hud.gd         interface
+scripts/hud.gd         interface no estilo Duke Nukem II
+scripts/pixel_font.gd  fonte pixelada
 scripts/touch_controls.gd  botões na tela do celular
 levels/                mapas das fases
 tests/smoke_test.*     teste automático que joga a fase 1

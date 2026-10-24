@@ -11,8 +11,8 @@ extends RefCounted
 ##   *  chip de dados         L  poste de luz         M  logo do metrô
 ## Pulo máximo: 3 blocos de altura e uns 4 de distância.
 
-const NAME := "FASE 1 – ESTAÇÃO BUTANTÃ"
-const SUBTITLE := "Av. Vital Brasil, 2087. A Serpentis Biotech fechou a rua. Desça pelo metrô."
+const NAME := "ESTAÇÃO BUTANTÃ"
+const SUBTITLE := "Av. Vital Brasil, 2087.\nA Serpentis Biotech fechou a rua.\nDesça pelo metrô!"
 
 const SIGNS := [
 	{"pos": Vector2i(2, 5), "text": "AV. VITAL BRASIL", "color": "00f0ff", "size": 11},

@@ -11,7 +11,8 @@ func _setup() -> void:
 	body_color = Color("#39ff14")
 	contact_offset = Vector2(0, -4)
 	contact_radius = 8.0
-	add_box(Vector2(18, 7), Vector2(0, -3.5))
+	add_box(Vector2(20, 8), Vector2(0, -4))
+	add_sprite(preload("res://art/snake.png"), 2, Vector2(0, -8))
 
 
 func _ai(delta: float, p) -> void:
@@ -26,15 +27,5 @@ func _ai(delta: float, p) -> void:
 		dir = -dir
 	velocity.x = dir * speed
 	move_and_slide()
-
-
-func _draw() -> void:
-	for i in range(6, -1, -1):
-		var x := -dir * (i * 3.0 - 6.0)
-		var y := -4.0 + sin(_t * 12.0 + i) * 1.5
-		var c := body_color if i % 2 == 0 else Color("#0f5a1f")
-		draw_rect(Rect2(x - 2, y - 2, 4, 4), tint(c))
-	var head := Vector2(dir * 9.0, -5.0)
-	draw_rect(Rect2(head.x - 3, head.y - 2.5, 6, 5), tint(Color("#1d7a2c")))
-	draw_rect(Rect2(head.x + dir * 1.0 - 0.5, head.y - 1.5, 1, 1), Color("#ff3355"))
-	draw_line(head + Vector2(dir * 3, 1), head + Vector2(dir * 6, 1 + sin(_t * 20.0)), Color("#ff2bd6"), 1.0)
+	sprite.flip_h = dir < 0
+	sprite.frame = int(_t * (10.0 if speed > 50.0 else 4.0)) % 2

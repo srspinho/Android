@@ -1,7 +1,10 @@
 extends Node2D
 ## Desenha os perigos animados: lodo tóxico (~) e trilho energizado (^).
 
+const TILES := preload("res://art/tiles.png")
 const T := 16
+const SLUDGE0 := 8
+const RAIL0 := 12
 
 var main
 
@@ -26,30 +29,9 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
 	for cell in _cells:
-		var o := Vector2(cell.x * T, cell.y * T)
+		var index: int
 		if cell.z == 0:
-			_sludge(o, cell.x)
+			index = SLUDGE0 + (int(_t * 5.0) + cell.x) % 4
 		else:
-			_rail(o)
-
-
-func _sludge(o: Vector2, x: int) -> void:
-	draw_rect(Rect2(o + Vector2(0, 4), Vector2(T, T - 4)), Color("#0f3d1a"))
-	var pts := PackedVector2Array()
-	for i in 5:
-		var px := i * 4.0
-		pts.append(o + Vector2(px, 5 + sin(_t * 3.0 + (x * T + px) * 0.4) * 1.5))
-	draw_polyline(pts, Color("#39ff14"), 1.0)
-	var b := fmod(_t * 0.8 + x * 0.37, 1.0)
-	draw_circle(o + Vector2(4 + (x % 3) * 4, 14 - b * 9), 1.0, Color("#7dff5a", 1.0 - b))
-
-
-func _rail(o: Vector2) -> void:
-	draw_rect(Rect2(o + Vector2(0, 8), Vector2(T, 8)), Color("#11131c"))
-	draw_rect(Rect2(o + Vector2(0, 10), Vector2(T, 2)), Color("#8890a0"))
-	var pts := PackedVector2Array()
-	var n := int(_t * 20.0) * 31 + int(o.x)
-	for i in 5:
-		pts.append(o + Vector2(i * 4.0, 6 + ((n * (i + 3)) % 7)))
-	draw_polyline(pts, Color("#ffe66b", 0.8), 1.0)
-	draw_rect(Rect2(o + Vector2(0, 2), Vector2(T, 12)), Color("#00f0ff", 0.06))
+			index = RAIL0 + (int(_t * 14.0) + cell.x) % 2
+		draw_texture_rect_region(TILES, Rect2(cell.x * T, cell.y * T, T, T), Rect2(index * T, 0, T, T))
