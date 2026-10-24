@@ -55,7 +55,7 @@ de tela de computador antiga a partir do traçado real das ruas (OpenStreetMap).
 - Pulo variável (segurar = mais alto), "coyote time" e buffer de pulo, para o controle
   ficar justo no toque
 - Sobe escadas e desce de plataformas finas (baixo + pulo)
-- Blaster: tiro normal, e "turbo" temporário com o item W
+- Blaster: tiro para a frente ou para cima (segurando ↑), e "turbo" temporário com o item W
 
 **Ideias para depois:** botas de salto duplo, gancho para se pendurar (escalar prédios),
 granada de pulso que derruba drones, escudo.
@@ -65,7 +65,7 @@ granada de pulso que derruba drones, escudo.
 | Inimigo | Comportamento | Vida | Pontos |
 |---|---|---|---|
 | Androide de segurança | Patrulha, para e atira quando vê o jogador na mesma altura | 3 | 200 |
-| Drone de vigilância | Segue o jogador pelo ar e atira mirando nele | 2 | 150 |
+| Drone de vigilância | Segue o jogador pelo ar e atira mirando nele; derrube com o tiro para cima | 2 | 150 |
 | Cobra cibernética | Rasteja e dá o bote rápido quando o jogador chega perto | 2 | 150 |
 
 **Planejados:** torreta de teto, motoqueiro com implantes (Marginal), aranha-robô de
@@ -79,6 +79,7 @@ manutenção do metrô, e os chefes de cada fase.
 | `K` | Cartão vermelho | Abre portas de laser (`\|`) |
 | `W` | Turbo no blaster | Tiro rápido por 15 s |
 | `*` | Chip de dados | +250 créditos |
+| `B` | Barraquinha de dogão | Enche a energia; depois fecha por 30 s. Fica em pontos estratégicos, antes dos trechos difíceis |
 
 **Planejados:** cartões azul/verde/amarelo, pastel de feira (cura total), caldo de cana
 turbinado (velocidade), segredos com bônus como no Duke Nukem.

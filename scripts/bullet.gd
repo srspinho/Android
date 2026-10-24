@@ -20,6 +20,7 @@ func _ready() -> void:
 	var shape := RectangleShape2D.new()
 	shape.size = Vector2(6, 3)
 	cs.shape = shape
+	cs.rotation = direction.angle()
 	add_child(cs)
 	body_entered.connect(_on_body_entered)
 

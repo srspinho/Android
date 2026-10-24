@@ -361,6 +361,28 @@ LEGS = {
         "...ddddd............",
     ],
 }
+# Mirando para cima: braço erguido e blaster apontado para o alto.
+HERO_UP = [
+    "........Hh.....cc...",
+    ".......HHhh....DD...",
+    "......hHHhhh...dD...",
+    "......Sssssss..dD...",
+    "......Sssssssssdd...",
+    "......SsssDccccgg...",
+    "......Ssssscccclg...",
+    "......SSssssssslg...",
+    ".......SSssssSlg....",
+    "........SSSSllg.....",
+    ".....jjjjJJlgj......",
+    "....jjjjJJcgjjj.....",
+    "...jjjjjJJcJjjj.....",
+    "...jjjjjJJcJjjj.....",
+    "...jHjjjJJcJjjj.....",
+    "...jHjjjJJcJjjj.....",
+    "....jjjjJJJJjj......",
+    "....DDDDyDDDDD......",
+]
+# A ordem dos quadros precisa bater com as constantes F_* de scripts/player.gd.
 HERO_FRAMES = [
     (HERO_UPPER, "stand"),
     (HERO_UPPER, "runA"),
@@ -369,6 +391,11 @@ HERO_FRAMES = [
     (HERO_UPPER, "jump"),
     (HERO_BACK, "stand"),
     (HERO_BACK, "climb2"),
+    (HERO_UP, "stand"),
+    (HERO_UP, "runA"),
+    (HERO_UP, "runB"),
+    (HERO_UP, "runC"),
+    (HERO_UP, "jump"),
 ]
 
 
@@ -938,12 +965,65 @@ def gen_city():
     near.save(os.path.join(ROOT, "bg_near.png"))
 
 
+# --- Barraquinha de dogão ----------------------------------------------------------
+
+def hotdog_frame(open_):
+    """Carrinho de cachorro-quente com guarda-sol neon (48x40)."""
+    img = new(48, 40)
+    # Guarda-sol listrado
+    for y in range(2, 11):
+        half = round(22 * math.sqrt(max(0.0, 1 - ((10 - y) / 9) ** 2)))
+        for x in range(24 - half, 24 + half):
+            c = "H" if ((x - 24) // 5) % 2 == 0 else "y"
+            if y == 10:
+                c = "h" if c == "H" else "Y"
+            rect(img, x, y, 1, 1, c)
+    rect(img, 23, 11, 2, 11, "g")
+    rect(img, 23, 11, 1, 11, "l")
+    # Balcão e carrinho
+    rect(img, 4, 20, 40, 2, "w")
+    rect(img, 4, 22, 40, 1, "g")
+    bevel(img, 5, 23, 38, 11, "l", "g", "d")
+    rect(img, 8, 25, 32, 7, "k")
+    text(img, 9, 26, "DOGÃO", "y" if open_ else "d")
+    for x in (12, 36):
+        for y in range(-3, 4):
+            for dx in range(-3, 4):
+                if dx * dx + y * y <= 9:
+                    rect(img, x + dx, 36 + y, 1, 1, "D" if dx * dx + y * y > 2 else "g")
+    if open_:
+        # Dogão no balcão, mostarda, ketchup e fumacinha
+        rect(img, 8, 17, 12, 3, "o")
+        rect(img, 9, 16, 10, 2, "r")
+        rect(img, 10, 16, 8, 1, "y")
+        rect(img, 30, 14, 3, 6, "y")
+        rect(img, 30, 13, 1, 1, "Y")
+        rect(img, 35, 14, 3, 6, "R")
+        rect(img, 36, 13, 1, 1, "r")
+        for i, (x, y) in enumerate(((11, 13), (14, 11), (12, 9), (16, 12))):
+            rect(img, x, y, 1, 1, "w" if i % 2 == 0 else "l")
+    else:
+        # Fechado: porta de enrolar abaixada
+        for y in range(12, 20):
+            rect(img, 5, y, 38, 1, "g" if y % 2 == 0 else "d")
+    add_outline(img)
+    return img
+
+
+def gen_hotdog():
+    img = new(96, 40)
+    img.alpha_composite(hotdog_frame(True), (0, 0))
+    img.alpha_composite(hotdog_frame(False), (48, 0))
+    img.save(os.path.join(ROOT, "hotdog.png"))
+
+
 def main():
     os.makedirs(ROOT, exist_ok=True)
     gen_font()
     gen_hero()
     gen_enemies()
     gen_items()
+    gen_hotdog()
     gen_portrait()
     gen_tiles()
     gen_tech_backdrop()

@@ -13,6 +13,8 @@ Feito em **Godot 4** para **Android**, mas também roda no PC.
 
 - Herói (Duca Neon) que anda, pula (com pulo curto/longo), sobe escadas, desce de plataformas e atira
 - Inimigos: androide de segurança, drone de vigilância e cobra cibernética
+- Tiro para cima (segure ↑), para derrubar os drones
+- Barraquinhas de dogão que enchem a energia (e fecham por 30 s depois de servir)
 - Itens: coxinha energética (vida), cartão de acesso vermelho, turbo no blaster, chips de dados (pontos)
 - Porta de laser que só abre com o cartão, lodo tóxico, trilho energizado
 - Pixel art no estilo Duke Nukem II: blocos de metal com faixas zebradas, caixas, painéis
@@ -34,6 +36,7 @@ Feito em **Godot 4** para **Android**, mas também roda no PC.
 | Subir/descer escada | ↑ ↓ ou W S | Direcional |
 | Pular | Espaço, Z ou K | A |
 | Atirar | X, J ou Ctrl | X |
+| Atirar para cima | ↑ + Atirar | Cima + X |
 | Descer da plataforma | ↓ + Pular | |
 | Continuar/reiniciar | Enter ou R | Start |
 
@@ -72,9 +75,10 @@ e o contorno preto é colocado automaticamente. Para mudar um desenho:
 
 | Arquivo | Conteúdo |
 |---|---|
-| `hero.png` | Herói: parado, 3 de corrida, pulo e 2 de escada (32×32 cada) |
+| `hero.png` | Herói: parado, 3 de corrida, pulo, 2 de escada e os mesmos mirando para cima (32×32 cada) |
 | `guard.png`, `drone.png`, `snake.png` | Inimigos (2 quadros cada) |
 | `items.png`, `exit.png` | Itens e porta de saída |
+| `hotdog.png` | Barraquinha de dogão (aberta e fechada) |
 | `tiles.png` | Blocos 16×16 (a ordem está em `scripts/level_art.gd`) |
 | `bg_*.png` | Fundos: céu, prédios distantes, prédios próximos e parede industrial |
 | `portrait.png`, `font.png`, `lamp.png` | Retrato do HUD, fonte e poste |
@@ -103,6 +107,7 @@ scripts/player.gd      herói: movimento, escada, tiro, dano
 scripts/enemy_*.gd     inimigos (base + segurança, drone, cobra)
 scripts/pickup.gd      itens e saída
 scripts/door.gd        porta de laser
+scripts/hotdog_stand.gd barraquinha de dogão
 scripts/level_art.gd   desenho dos blocos, parede de fundo, escadas e letreiros
 scripts/hazard_art.gd  lodo tóxico e trilho energizado animados
 scripts/background.gd  céu e prédios com parallax

@@ -26,6 +26,8 @@ const F_STAND := 0
 const F_RUN := [1, 2, 1, 3]
 const F_JUMP := 4
 const F_CLIMB := [5, 6]
+## Os quadros 7 a 11 repetem parado/corrida/pulo mirando para cima.
+const F_AIM_UP_OFFSET := 7
 
 var main
 var max_hp := 8
@@ -45,6 +47,7 @@ var _climbing := false
 var _anim := 0.0
 var _muzzle := 0.0
 var _sprite: Sprite2D
+var _aim_up := false
 
 
 func _ready() -> void:
@@ -60,7 +63,7 @@ func _ready() -> void:
 
 	_sprite = Sprite2D.new()
 	_sprite.texture = HERO
-	_sprite.hframes = 7
+	_sprite.hframes = 12
 	_sprite.position = Vector2(0, -16)
 	add_child(_sprite)
 
@@ -113,6 +116,8 @@ func _physics_process(delta: float) -> void:
 	else:
 		_process_move(delta, dir, vdir)
 
+	# Segurar para cima (fora da escada) mira o blaster para o alto.
+	_aim_up = vdir < -0.5 and not _climbing
 	collision_mask = MASK_PASS if (_climbing or _drop_timer > 0.0) else MASK_NORMAL
 	move_and_slide()
 
@@ -172,8 +177,12 @@ func _shoot() -> void:
 	var b = BulletScript.new()
 	b.main = main
 	b.from_player = true
-	b.direction = Vector2(facing, 0)
-	b.position = global_position + Vector2(facing * 12, -17)
+	if _aim_up:
+		b.direction = Vector2.UP
+		b.position = global_position + Vector2(facing * 8, -32)
+	else:
+		b.direction = Vector2(facing, 0)
+		b.position = global_position + Vector2(facing * 12, -17)
 	main.world.add_child(b)
 
 
@@ -203,18 +212,20 @@ func _animate() -> void:
 	_sprite.flip_h = facing < 0
 	if _climbing:
 		_sprite.frame = F_CLIMB[int(global_position.y / 8.0) % 2]
-	elif not is_on_floor():
-		_sprite.frame = F_JUMP
+		queue_redraw()
+		return
+	var f := F_STAND
+	if not is_on_floor():
+		f = F_JUMP
 	elif absf(velocity.x) > 10.0:
-		_sprite.frame = F_RUN[int(_anim * 10.0) % F_RUN.size()]
-	else:
-		_sprite.frame = F_STAND
+		f = F_RUN[int(_anim * 10.0) % F_RUN.size()]
+	_sprite.frame = f + (F_AIM_UP_OFFSET if _aim_up else 0)
 	queue_redraw()
 
 
 func _draw() -> void:
 	# Clarão do tiro na ponta do blaster
 	if _muzzle > 0.0 and _sprite.visible:
-		var tip := Vector2(facing * 13, -17)
+		var tip := Vector2(facing * 8, -33) if _aim_up else Vector2(facing * 13, -17)
 		draw_rect(Rect2(tip - Vector2(3, 3), Vector2(6, 6)), Color("#54fcfc"))
 		draw_rect(Rect2(tip - Vector2(1, 1), Vector2(3, 3)), Color.WHITE)

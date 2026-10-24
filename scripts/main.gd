@@ -21,6 +21,7 @@ const DroneScript := preload("res://scripts/enemy_drone.gd")
 const SnakeScript := preload("res://scripts/enemy_snake.gd")
 const PickupScript := preload("res://scripts/pickup.gd")
 const DoorScript := preload("res://scripts/door.gd")
+const HotdogScript := preload("res://scripts/hotdog_stand.gd")
 const FxScript := preload("res://scripts/fx.gd")
 const LevelArtScript := preload("res://scripts/level_art.gd")
 const HazardArtScript := preload("res://scripts/hazard_art.gd")
@@ -235,6 +236,8 @@ func _spawn_entities() -> void:
 					_spawn(DroneScript, center)
 				"C":
 					_spawn(SnakeScript, feet)
+				"B":
+					_spawn(HotdogScript, feet)
 				"K", "+", "W", "*", "E":
 					var p = PickupScript.new()
 					p.kind = c
