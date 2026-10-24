@@ -7,6 +7,7 @@ const TILE := 16
 ## Lista de fases, na ordem em que são jogadas.
 const LEVELS := [
 	preload("res://levels/fase1_estacao_butanta.gd"),
+	preload("res://levels/fase2_instituto_butantan.gd"),
 ]
 
 ## Caracteres do mapa que viram colisão.
@@ -19,6 +20,7 @@ const PlayerScript := preload("res://scripts/player.gd")
 const GuardScript := preload("res://scripts/enemy_guard.gd")
 const DroneScript := preload("res://scripts/enemy_drone.gd")
 const SnakeScript := preload("res://scripts/enemy_snake.gd")
+const BossScript := preload("res://scripts/enemy_boss.gd")
 const PickupScript := preload("res://scripts/pickup.gd")
 const DoorScript := preload("res://scripts/door.gd")
 const HotdogScript := preload("res://scripts/hotdog_stand.gd")
@@ -42,6 +44,8 @@ var rows := 0
 var world: Node2D
 var player
 var hud
+## Chefe da fase, se houver (ele mesmo se registra aqui).
+var boss
 
 var _finished := false
 var _next_action := ""
@@ -53,7 +57,9 @@ func _ready() -> void:
 	level = LEVELS[current_level % LEVELS.size()]
 	_parse_map(level.MAP)
 
-	add_child(BackgroundScript.new())
+	var bg = BackgroundScript.new()
+	bg.main = self
+	add_child(bg)
 	world = Node2D.new()
 	add_child(world)
 
@@ -138,6 +144,11 @@ func is_one_way_below(pos: Vector2) -> bool:
 
 func snap_to_cell_center(x: float) -> float:
 	return floorf(x / TILE) * TILE + TILE / 2.0
+
+
+## Constante opcional do arquivo da fase (ex.: INTERIOR_BG), com valor padrão.
+func level_const(name: String, default: Variant) -> Variant:
+	return level.get_script_constant_map().get(name, default)
 
 
 func level_pixel_size() -> Vector2i:
@@ -238,19 +249,22 @@ func _spawn_entities() -> void:
 					_spawn(SnakeScript, feet)
 				"B":
 					_spawn(HotdogScript, feet)
-				"K", "+", "W", "*", "E":
+				"J":
+					_spawn(BossScript, feet)
+				"K", "U", "+", "W", "*", "E":
 					var p = PickupScript.new()
 					p.kind = c
 					p.main = self
 					p.position = center
 					world.add_child(p)
-				"|":
-					if char_at(x, y - 1) != "|":
+				"|", "!":
+					if char_at(x, y - 1) != c:
 						var door = DoorScript.new()
 						door.main = self
+						door.card = "red" if c == "|" else "blue"
 						door.position = Vector2(x * TILE + TILE / 2.0, y * TILE)
 						var h := 0
-						while char_at(x, y + h) == "|":
+						while char_at(x, y + h) == c:
 							h += 1
 						door.height_cells = h
 						world.add_child(door)
@@ -269,6 +283,10 @@ func _spawn(script: GDScript, pos: Vector2) -> void:
 
 func level_number() -> int:
 	return current_level + 1
+
+
+func boss_alive() -> bool:
+	return is_instance_valid(boss) and boss.hp > 0
 
 
 func get_score() -> int:
@@ -297,7 +315,7 @@ func level_complete() -> void:
 		hud.show_overlay("FASE CONCLUÍDA!", "Toque ou aperte ENTER\npara continuar")
 	else:
 		_next_action = "end"
-		hud.show_overlay("FIM DA DEMO!", "Fase 2 – Instituto Butantan – em construção.\n\nToque ou aperte ENTER\npara jogar de novo")
+		hud.show_overlay("FIM DA DEMO!", "Fase 3 – Cidade Universitária – em construção.\n\nToque ou aperte ENTER\npara jogar de novo")
 
 
 func _on_player_died() -> void:

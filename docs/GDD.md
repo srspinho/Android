@@ -38,8 +38,8 @@ Inspirado no **Duke Nukem II** (1993), com tema cyberpunk:
 
 | # | Fase | Inspiração real | Ideia |
 |---|---|---|---|
-| 1 | **Estação Butantã** ✅ demo | Av. Vital Brasil, estação da Linha 4 | Rua bloqueada, descer pelo metrô, cartão vermelho, porta da plataforma |
-| 2 | **Instituto Butantan** | Instituto Butantan e o serpentário | Biolab invadido: cobras cibernéticas, tubos de veneno, chefe: **Jararaca-X** |
+| 1 | **Estação Butantã** ✅ | Av. Vital Brasil, estação da Linha 4 | Rua bloqueada, descer pelo metrô, cartão vermelho, porta da plataforma |
+| 2 | **Instituto Butantan** ✅ | Instituto Butantan e o serpentário | Parque com fosso do serpentário, laboratório de 2 andares, cartão azul, chefe: **Jararaca-X** |
 | 3 | **Cidade Universitária** | USP, Praça do Relógio, Raia Olímpica | Campus ocupado por drones, saltos sobre a Raia alagada, chefe na Torre do Relógio |
 | 4 | **Morro do Querosene** | Bairro boêmio do Butantã | Becos verticais, telhados, festa de rua com hologramas, mercado negro de implantes |
 | 5 | **Rio Pequeno** | Av. Escola Politécnica, córrego do Rio Pequeno | Favela vertical cyberpunk, elevadores improvisados, córrego tóxico |
@@ -68,6 +68,12 @@ granada de pulso que derruba drones, escudo.
 | Drone de vigilância | Segue o jogador pelo ar e atira mirando nele; derrube com o tiro para cima | 2 | 150 |
 | Cobra cibernética | Rasteja e dá o bote rápido quando o jogador chega perto | 2 | 150 |
 
+**Chefe da fase 2, JARARACA-X** (30 de vida, 5000 pontos): rasteja de parede a
+parede, se ergue e cospe um leque de veneno mirando no jogador (3 jatos, ou 5 quando
+está com menos da metade da vida) e fica mais rápida conforme apanha. Acorda quando
+o jogador chega perto ou atira nela, e não volta a dormir. A saída só abre depois que
+ela é derrotada.
+
 **Planejados:** torreta de teto, motoqueiro com implantes (Marginal), aranha-robô de
 manutenção do metrô, e os chefes de cada fase.
 
@@ -81,12 +87,15 @@ manutenção do metrô, e os chefes de cada fase.
 | `*` | Chip de dados | +250 créditos |
 | `B` | Barraquinha de dogão | Enche a energia; depois fecha por 30 s. Fica em pontos estratégicos, antes dos trechos difíceis |
 
-**Planejados:** cartões azul/verde/amarelo, pastel de feira (cura total), caldo de cana
+| `U` | Cartão azul | Abre portas de laser azuis (`!`) |
+
+**Planejados:** cartões verde/amarelo, pastel de feira (cura total), caldo de cana
 turbinado (velocidade), segredos com bônus como no Duke Nukem.
 
 ## Controles no celular
 
-- Direcional virtual à esquerda e **TIRO**/**PULO** à direita, com multitoque
+- Direcional analógico de 8 direções à esquerda (a diagonal permite andar e mirar
+  para cima) e **TIRO**/**PULO** à direita, com multitoque
 - Tela sempre em paisagem e modo imersivo (sem barras do Android)
 - Também funciona com controle Bluetooth
 
@@ -94,7 +103,7 @@ turbinado (velocidade), segredos com bônus como no Duke Nukem.
 
 1. Jogar a demo no celular e ajustar a velocidade, o pulo e o tamanho dos botões
 2. Efeitos sonoros e trilha synthwave
-3. Fase 2 (Instituto Butantan) e o primeiro chefe
+3. Fase 3 (Cidade Universitária) e o chefe na Torre do Relógio
 4. Tela de título, pausa e salvamento do progresso
 5. Mapa do bairro entre as fases
 6. Mais quadros de animação (tiro, dano, morte) e explosões em pixel art

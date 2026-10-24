@@ -73,7 +73,7 @@ func _run():
 	print("PORTA SEM CARTAO x=", p.global_position.x, " (deve parar antes de 1600)")
 	await shot("05_porta")
 	p.global_position = Vector2(4*16, 22*16); await wait(0.3)
-	print("CARTAO: ", p.has_keycard)
+	print("CARTAO: ", p.keycards.get("red", false))
 	p.global_position = Vector2(97*16, 22*16); await wait(0.2)
 	await hold("move_right", 1.2)
 	print("PORTA COM CARTAO x=", p.global_position.x)

@@ -123,8 +123,12 @@ func _draw_side_panel(r: Rect2) -> void:
 	_label(x, 5, PANEL_W, "ITENS", C_BLUE)
 	var items := Rect2(x + 6, 15, PANEL_W - 12, 20)
 	_box(items)
-	if p.has_keycard:
-		_canvas.draw_texture_rect_region(ITEMS, Rect2(items.position + Vector2(2, 2), Vector2(16, 16)), Rect2(16, 0, 16, 16))
+	# Cartões à esquerda (vermelho e azul), turbo à direita
+	var slot := 0
+	for card in [["red", 1], ["blue", 4]]:
+		if p.keycards.get(card[0], false):
+			_canvas.draw_texture_rect_region(ITEMS, Rect2(items.position + Vector2(1 + slot * 11, 2), Vector2(16, 16)), Rect2(card[1] * 16, 0, 16, 16))
+			slot += 1
 	var show_turbo: bool = p.rapid_fire > 3.0 or (p.rapid_fire > 0.0 and int(p.rapid_fire * 4.0) % 2 == 0)
 	if show_turbo:
 		_canvas.draw_texture_rect_region(ITEMS, Rect2(items.position + Vector2(24, 2), Vector2(16, 16)), Rect2(32, 0, 16, 16))
@@ -210,8 +214,23 @@ func _draw_blaster(o: Vector2, turbo: bool) -> void:
 
 # --- Textos na área de jogo -------------------------------------------------
 
+## Barra de vida do chefe, no alto da tela, quando ele está perto.
+func _draw_boss_bar(play: Rect2) -> void:
+	if not main.boss_alive():
+		return
+	var b = main.boss
+	if b.global_position.distance_to(main.player.global_position) > b.active_range:
+		return
+	var w := minf(play.size.x - 40, 200.0)
+	var r := Rect2(roundf(play.get_center().x - w / 2.0), play.end.y - 14, w, 6)
+	PixelFont.draw_centered(_canvas, r.get_center().x, r.position.y - 10, "JARARACA-X", C_GREEN)
+	_box(r)
+	_canvas.draw_rect(Rect2(r.position, Vector2(r.size.x * b.hp / b.MAX_HP, r.size.y)), Color("#00a800"))
+	_canvas.draw_rect(Rect2(r.position, Vector2(r.size.x * b.hp / b.MAX_HP, 2)), C_GREEN)
+
 func _draw_play_texts(play: Rect2) -> void:
 	var cx := play.get_center().x
+	_draw_boss_bar(play)
 	if _banner_t > 0.0:
 		var a := clampf(_banner_t, 0.0, 1.0)
 		var lines := _banner_sub.count("\n") + 1

@@ -4,8 +4,6 @@ extends CharacterBody2D
 
 const BulletScript := preload("res://scripts/bullet.gd")
 const GRAVITY := 980.0
-## Inimigos longe do jogador ficam parados para poupar bateria.
-const ACTIVE_RANGE := 420.0
 
 var main
 var hp := 2
@@ -13,6 +11,8 @@ var points := 100
 var body_color := Color("#ff3355")
 var contact_offset := Vector2(0, -8)
 var contact_radius := 9.0
+## Inimigos longe do jogador ficam parados para poupar bateria.
+var active_range := 420.0
 
 var sprite: Sprite2D
 
@@ -39,7 +39,7 @@ func _physics_process(delta: float) -> void:
 	_t += delta
 	_flash -= delta
 	var p = main.player
-	if p == null or global_position.distance_to(p.global_position) > ACTIVE_RANGE:
+	if p == null or global_position.distance_to(p.global_position) > active_range:
 		return
 	_ai(delta, p)
 	sprite.modulate = Color(1, 0.35, 0.35) if _flash > 0.0 else Color.WHITE
@@ -75,13 +75,14 @@ func hurt(amount: int) -> void:
 		queue_free()
 
 
-func shoot(dir: Vector2, from: Vector2) -> void:
+func shoot(dir: Vector2, from: Vector2):
 	var b = BulletScript.new()
 	b.main = main
 	b.from_player = false
 	b.direction = dir.normalized()
 	b.position = global_position + from
 	main.world.add_child(b)
+	return b
 
 
 ## Verdadeiro quando há parede ou buraco logo à frente.

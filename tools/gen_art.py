@@ -558,8 +558,18 @@ ITEMS = {
         ".DDDDDDD.",
         "..g.g.g..",
     ],
+    "card_blue": [
+        "bbbbbbbbbbbb",
+        "bDDDDDDDDDDb",
+        "bbbbbbbbbbbb",
+        "bYybbbbbwwwb",
+        "bYybbbbbbbbb",
+        "bbbbbbbbwwwb",
+        "BBBBBBBBBBBB",
+    ],
 }
-ITEM_ORDER = ["coxinha", "card", "turbo", "chip"]
+# A ordem precisa bater com FRAMES em scripts/pickup.gd e com o HUD.
+ITEM_ORDER = ["coxinha", "card", "turbo", "chip", "card_blue"]
 
 
 def gen_items():
@@ -1017,6 +1027,178 @@ def gen_hotdog():
     img.save(os.path.join(ROOT, "hotdog.png"))
 
 
+# --- Fase 2: Instituto Butantan ---------------------------------------------------
+
+def disc(img, cx, cy, r, c):
+    for y in range(-r, r + 1):
+        for x in range(-r, r + 1):
+            if x * x + y * y <= r * r + r * 0.6:
+                rect(img, cx + x, cy + y, 1, 1, c)
+
+
+def shaded_disc(img, cx, cy, r, base, light, dark, plate=False):
+    """Segmento redondo da cobra, com luz em cima e sombra embaixo."""
+    disc(img, cx, cy, r, dark)
+    disc(img, cx, cy - 1, r - 1, base)
+    disc(img, cx - 1, cy - max(1, r // 2), max(1, r // 3), light)
+    if plate:
+        rect(img, cx - 1, cy - r, 2, r * 2, "g")
+        rect(img, cx - 1, cy - r, 1, r * 2, "l")
+
+
+def boss_head(img, hx, hy, open_mouth):
+    """Cabeça da Jararaca-X virada para a direita, com focinho em (hx, hy)."""
+    for y in range(-6, 7):
+        for x in range(-14, 1):
+            if (x / 14.0) ** 2 + (y / 6.0) ** 2 <= 1.0:
+                rect(img, hx + x, hy + y, 1, 1, "E" if y > -2 else "e")
+    rect(img, hx - 12, hy - 4, 10, 1, "g")  # placa de metal na cabeça
+    rect(img, hx - 12, hy - 5, 10, 1, "l")
+    rect(img, hx - 6, hy - 2, 3, 2, "r")
+    rect(img, hx - 5, hy - 2, 1, 1, "y")
+    if open_mouth:
+        rect(img, hx - 10, hy + 2, 12, 5, "R")
+        rect(img, hx - 9, hy + 3, 10, 3, "r")
+        for fx in (hx - 8, hx - 2):
+            rect(img, fx, hy + 2, 1, 3, "w")
+            rect(img, fx, hy + 5, 1, 2, "w")
+    else:
+        rect(img, hx - 12, hy + 3, 12, 1, "f")
+    rect(img, hx + 1, hy + 1, 3, 1, "H")
+
+
+def boss_frame(kind, phase=0.0):
+    """Quadros 80x48 da Jararaca-X: rastejando (2) e erguida cuspindo (1)."""
+    img = new(80, 48)
+    if kind == "crawl":
+        for i in range(16):
+            x = 6 + i * 3.6
+            y = 38 + math.sin(phase + i * 0.7) * 2.5
+            r = 3 + min(i, 10) * 0.35
+            shaded_disc(img, round(x), round(y), round(r), "E", "e", "f", plate=(i % 4 == 3))
+        boss_head(img, 76, 35, False)
+    else:
+        for i in range(10):
+            x = 6 + i * 3.4
+            y = 40 + math.sin(i * 0.8) * 2
+            shaded_disc(img, round(x), round(y), round(3 + i * 0.4), "E", "e", "f", plate=(i % 4 == 3))
+        # Pescoço subindo em curva
+        for i in range(12):
+            t = i / 11
+            x = 40 + t * 22 + math.sin(t * math.pi) * 6
+            y = 38 - t * 26
+            shaded_disc(img, round(x), round(y), 6, "E", "e", "f", plate=(i % 4 == 1))
+        boss_head(img, 77, 12, True)
+    add_outline(img)
+    return img
+
+
+def gen_boss():
+    img = new(240, 48)
+    img.alpha_composite(boss_frame("crawl", 0.0), (0, 0))
+    img.alpha_composite(boss_frame("crawl", 1.8), (80, 0))
+    img.alpha_composite(boss_frame("rear"), (160, 0))
+    img.save(os.path.join(ROOT, "boss.png"))
+
+
+def gen_plant():
+    """Planta tropical com flores laranja, como as do Duke Nukem II (32x32)."""
+    img = new(32, 32)
+    base = (16, 31)
+    leaves = [(-14, 14), (-11, 6), (-5, 1), (3, 0), (10, 5), (14, 13), (-8, 18), (8, 18)]
+    for tx, ty in leaves:
+        steps = 14
+        for i in range(steps + 1):
+            t = i / steps
+            x = base[0] + tx * t
+            y = base[1] + (ty - base[1]) * t + math.sin(t * math.pi) * -3
+            w = 2 if 0.2 < t < 0.85 else 1
+            rect(img, round(x), round(y), w, 2, "E" if i % 3 else "e")
+    for fx, fy in ((9, 12), (21, 9), (24, 17), (12, 4)):
+        disc(img, fx, fy, 2, "o")
+        rect(img, fx, fy, 1, 1, "r")
+    rect(img, 15, 24, 2, 8, "f")
+    add_outline(img)
+    img.save(os.path.join(ROOT, "plant.png"))
+
+
+def gen_lab_backdrop():
+    """Parede do laboratório da Serpentis: painéis esverdeados e tubos de vidro
+    com cobras em líquido verde."""
+    W, H = 128, 128
+    img = new(W, H)
+    pl, pm, pd, pk = (86, 104, 96), (60, 76, 70), (38, 50, 46), (22, 30, 28)
+    rect(img, 0, 0, W, H, (*pm, 255))
+    for x, y, w, h in ((0, 0, 64, 24), (64, 0, 64, 24), (0, 104, 128, 24)):
+        bevel(img, x, y, w, h, pl, pm, pd)
+    for y in (8, 14):
+        rect(img, 6, y, 52, 1, (*pk, 255))
+        rect(img, 70, y, 52, 1, (*pk, 255))
+    # Dois tubos com cobras
+    for tx in (10, 74):
+        rect(img, tx - 2, 26, 48, 6, PAL["g"] + (255,))
+        rect(img, tx - 2, 26, 48, 1, PAL["l"] + (255,))
+        rect(img, tx - 2, 96, 48, 6, PAL["g"] + (255,))
+        rect(img, tx - 2, 101, 48, 1, PAL["d"] + (255,))
+        for y in range(32, 96):
+            for x in range(tx, tx + 44):
+                c = dither_pick(x, y, (y - 32) / 64 * 0.7 + 0.15, (20, 90, 40), (10, 50, 24))
+                rect(img, x, y, 1, 1, (*c, 255))
+        rect(img, tx + 3, 34, 2, 58, (150, 230, 170, 255))
+        rect(img, tx + 38, 34, 1, 58, (90, 170, 110, 255))
+        for i in range(26):
+            x = tx + 22 + round(math.sin(i * 0.55) * 11)
+            y = 40 + i * 2
+            rect(img, x, y, 3, 3, PAL["f"] + (255,))
+            rect(img, x, y, 2, 1, (40, 140, 60, 255))
+        for i in range(5):
+            rect(img, tx + 8 + i * 7, 88 - (i * 13) % 40, 1, 1, PAL["e"] + (255,))
+    rect(img, 60, 30, 6, 70, (*pd, 255))
+    rect(img, 61, 30, 1, 70, (*pl, 255))
+    img.save(os.path.join(ROOT, "bg_lab.png"))
+
+
+def gen_butantan_backdrop():
+    """Camada próxima da fase 2: o prédio histórico do Instituto Butantan
+    entre palmeiras, com iluminação neon da noite de 2087."""
+    W, H = 512, 216
+    img = new(W, H)
+    rng = random.Random(5)
+    # Prédio histórico
+    bx, by, bw = 150, 112, 210
+    facade, shade = (110, 80, 120), (80, 56, 92)
+    rect(img, bx, by, bw, H - by, (*facade, 255))
+    rect(img, bx - 6, by - 6, bw + 12, 6, (96, 34, 46, 255))   # telhado
+    rect(img, bx - 6, by - 7, bw + 12, 1, (140, 60, 70, 255))
+    rect(img, bx + 80, by - 22, 50, 16, (*facade, 255))        # frontão central
+    rect(img, bx + 76, by - 26, 58, 4, (96, 34, 46, 255))
+    for row in range(2):
+        for i in range(12):
+            wx = bx + 8 + i * 17
+            wy = by + 10 + row * 30
+            rect(img, wx, wy, 9, 16, (30, 20, 40, 255))
+            rect(img, wx + 1, wy - 1, 7, 1, (30, 20, 40, 255))
+            if rng.random() < 0.5:
+                rect(img, wx + 1, wy + 2, 7, 13, (252, 220, 120, 255) if rng.random() < 0.6 else (84, 252, 252, 255))
+            rect(img, wx, wy + 16, 9, 1, (*shade, 255))
+    for cx in range(bx + 86, bx + 126, 9):                     # colunas da entrada
+        rect(img, cx, by + 70, 4, H - by - 70, (150, 120, 160, 255))
+    text(img, bx + 47, by - 18, "INSTITUTO BUTANTAN", "e", shadow="f")
+    # Palmeiras
+    for px in (30, 96, 400, 470):
+        h = rng.randint(90, 120)
+        for y in range(H - h, H):
+            rect(img, px + round(math.sin(y * 0.05) * 2), y, 3, 1, (40, 26, 30, 255))
+        top = (px + 1, H - h)
+        for ang in range(0, 360, 40):
+            a = math.radians(ang)
+            for t in range(1, 20):
+                x = top[0] + math.cos(a) * t
+                y = top[1] + math.sin(a) * t * 0.5 + t * t * 0.03
+                rect(img, round(x), round(y), 2, 1, (10, 70, 40, 255) if t % 3 else (20, 110, 60, 255))
+    img.save(os.path.join(ROOT, "bg_butantan.png"))
+
+
 def main():
     os.makedirs(ROOT, exist_ok=True)
     gen_font()
@@ -1024,6 +1206,10 @@ def main():
     gen_enemies()
     gen_items()
     gen_hotdog()
+    gen_boss()
+    gen_plant()
+    gen_lab_backdrop()
+    gen_butantan_backdrop()
     gen_portrait()
     gen_tiles()
     gen_tech_backdrop()

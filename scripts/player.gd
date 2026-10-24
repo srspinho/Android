@@ -33,7 +33,8 @@ var main
 var max_hp := 8
 var hp := 8
 var facing := 1
-var has_keycard := false
+## Cartões de acesso coletados: "red", "blue".
+var keycards := {}
 var rapid_fire := 0.0
 var frozen := false
 var dead := false
@@ -42,7 +43,9 @@ var _shoot_cd := 0.0
 var _invuln := 0.0
 var _coyote := 0.0
 var _jump_buffer := 0.0
-var _drop_timer := 0.0
+## Ao descer de uma plataforma (baixo + pulo), o herói ignora as plataformas
+## até os pés passarem desta altura (o corpo inteiro já abaixo dela).
+var _drop_until_y := -INF
 var _climbing := false
 var _anim := 0.0
 var _muzzle := 0.0
@@ -87,7 +90,6 @@ func _physics_process(delta: float) -> void:
 	_shoot_cd -= delta
 	_invuln -= delta
 	_muzzle -= delta
-	_drop_timer -= delta
 	rapid_fire = maxf(rapid_fire - delta, 0.0)
 	if dead:
 		return
@@ -118,7 +120,8 @@ func _physics_process(delta: float) -> void:
 
 	# Segurar para cima (fora da escada) mira o blaster para o alto.
 	_aim_up = vdir < -0.5 and not _climbing
-	collision_mask = MASK_PASS if (_climbing or _drop_timer > 0.0) else MASK_NORMAL
+	var dropping := global_position.y < _drop_until_y
+	collision_mask = MASK_PASS if (_climbing or dropping) else MASK_NORMAL
 	move_and_slide()
 
 	if Input.is_action_pressed("shoot") and _shoot_cd <= 0.0 and not _climbing:
@@ -157,7 +160,8 @@ func _process_move(delta: float, dir: float, vdir: float) -> void:
 		_jump_buffer = 0.0
 		_coyote = 0.0
 		if vdir > 0.5 and main.is_one_way_below(global_position):
-			_drop_timer = 0.25  # baixo + pulo: desce da plataforma
+			# baixo + pulo: desce da plataforma (6 px de espessura + altura do corpo)
+			_drop_until_y = global_position.y + 6.0 + 28.0 + 2.0
 		else:
 			velocity.y = JUMP_VELOCITY
 
@@ -179,7 +183,9 @@ func _shoot() -> void:
 	b.from_player = true
 	if _aim_up:
 		b.direction = Vector2.UP
-		b.position = global_position + Vector2(facing * 8, -32)
+		# Nasce dentro da largura do corpo: encostado numa parede, o tiro
+		# não pode começar dentro dela.
+		b.position = global_position + Vector2(facing * 4, -30)
 	else:
 		b.direction = Vector2(facing, 0)
 		b.position = global_position + Vector2(facing * 12, -17)

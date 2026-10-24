@@ -5,6 +5,8 @@ var main
 var direction := Vector2.RIGHT
 var speed := 330.0
 var from_player := true
+## Cor opcional (a Jararaca-X cospe veneno verde).
+var color := Color(0, 0, 0, 0)
 
 var _life := 1.2
 
@@ -40,6 +42,8 @@ func _on_body_entered(body: Node) -> void:
 
 
 func _color() -> Color:
+	if color.a > 0.0:
+		return color
 	return Color("#00f0ff") if from_player else Color("#ff7a1a")
 
 

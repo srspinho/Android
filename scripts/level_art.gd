@@ -6,7 +6,7 @@ extends Node2D
 const PixelFont := preload("res://scripts/pixel_font.gd")
 const TILES := preload("res://art/tiles.png")
 const LAMP := preload("res://art/lamp.png")
-const BG_TECH := preload("res://art/bg_tech.png")
+const PLANT := preload("res://art/plant.png")
 
 const T := 16
 # Índices dos tiles em art/tiles.png (mesma ordem de TILE_NAMES no gerador).
@@ -23,6 +23,13 @@ const DEEP := 15
 const METRO := 16
 
 var main
+
+var _interior: Texture2D
+
+
+func _ready() -> void:
+	# Cada fase pode ter sua parede de fundo (constante INTERIOR_BG).
+	_interior = load(main.level_const("INTERIOR_BG", "res://art/bg_tech.png"))
 
 
 func _draw() -> void:
@@ -43,6 +50,8 @@ func _draw() -> void:
 					_tile(METRO, pos)
 				"L":
 					draw_texture(LAMP, pos + Vector2(0, T - LAMP.get_height()))
+				"v":
+					draw_texture(PLANT, pos + Vector2((T - PLANT.get_width()) / 2.0, T - PLANT.get_height()))
 	for s in main.level.SIGNS:
 		_sign(s)
 
@@ -73,8 +82,8 @@ func _block_tile(x: int, y: int) -> int:
 ## Áreas cobertas (como o subsolo do metrô) ganham parede industrial ao
 ## fundo em vez de mostrar o céu da cidade.
 func _draw_interiors() -> void:
-	var w := BG_TECH.get_width()
-	var h := BG_TECH.get_height()
+	var w := _interior.get_width()
+	var h := _interior.get_height()
 	for x in main.cols:
 		var covered := false
 		for y in main.rows:
@@ -84,7 +93,7 @@ func _draw_interiors() -> void:
 			var walled: bool = main.is_solid_cell(x - 1, y) and main.is_solid_cell(x + 1, y)
 			if covered or walled:
 				var src := Rect2(posmod(x * T, w), posmod(y * T, h), T, T)
-				draw_texture_rect_region(BG_TECH, Rect2(x * T, y * T, T, T), src)
+				draw_texture_rect_region(_interior, Rect2(x * T, y * T, T, T), src)
 
 
 ## Letreiro de neon: {"pos": Vector2i(célula), "text": "...", "color": "rrggbb"}

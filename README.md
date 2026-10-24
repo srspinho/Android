@@ -9,7 +9,17 @@ Feito em **Godot 4** para **Android**, mas também roda no PC.
 ![Prédio](docs/screenshots/predio.png)
 ![Metrô](docs/screenshots/metro.png)
 
-## O que já funciona (demo da Fase 1 – Estação Butantã)
+## O que já funciona
+
+**Fase 1 – Estação Butantã:** rua bloqueada na Av. Vital Brasil, descida pelo metrô,
+cartão vermelho e porta da plataforma.
+
+**Fase 2 – Instituto Butantan:** parque com o fosso do serpentário (tem segredos lá
+embaixo), laboratório de dois andares da Serpentis, cartão azul e a luta contra a
+chefe **JARARACA-X**, uma cobra gigante que rasteja, se ergue e cospe veneno. A saída
+só abre depois que ela é derrotada.
+
+Em todo o jogo:
 
 - Herói (Duca Neon) que anda, pula (com pulo curto/longo), sobe escadas, desce de plataformas e atira
 - Inimigos: androide de segurança, drone de vigilância e cobra cibernética
@@ -37,10 +47,13 @@ Feito em **Godot 4** para **Android**, mas também roda no PC.
 | Pular | Espaço, Z ou K | A |
 | Atirar | X, J ou Ctrl | X |
 | Atirar para cima | ↑ + Atirar | Cima + X |
-| Descer da plataforma | ↓ + Pular | |
+| Descer da plataforma | ↓ + Pular | Baixo + A |
 | Continuar/reiniciar | Enter ou R | Start |
 
-Para ver os botões de toque no PC, em **Depurar → Personalizar argumentos de execução**
+No celular, o direcional da esquerda é analógico, com 8 direções. Arrastando o dedo
+na diagonal, dá para andar e mirar para cima ao mesmo tempo.
+
+Para ver os controles de toque no PC, em **Depurar → Personalizar argumentos de execução**
 coloque `-- --touch`. O mouse simula o dedo.
 
 ## Como gerar o APK para Android
@@ -77,10 +90,12 @@ e o contorno preto é colocado automaticamente. Para mudar um desenho:
 |---|---|
 | `hero.png` | Herói: parado, 3 de corrida, pulo, 2 de escada e os mesmos mirando para cima (32×32 cada) |
 | `guard.png`, `drone.png`, `snake.png` | Inimigos (2 quadros cada) |
-| `items.png`, `exit.png` | Itens e porta de saída |
+| `items.png`, `exit.png` | Itens (coxinha, cartões, turbo, chip) e porta de saída |
+| `boss.png` | JARARACA-X: 2 quadros rastejando e 1 erguida cuspindo (80×48) |
+| `plant.png` | Planta tropical decorativa |
 | `hotdog.png` | Barraquinha de dogão (aberta e fechada) |
 | `tiles.png` | Blocos 16×16 (a ordem está em `scripts/level_art.gd`) |
-| `bg_*.png` | Fundos: céu, prédios distantes, prédios próximos e parede industrial |
+| `bg_*.png` | Fundos: céu, prédios distantes, camada próxima de cada fase (`bg_near`, `bg_butantan`) e paredes internas (`bg_tech`, `bg_lab`) |
 | `portrait.png`, `font.png`, `lamp.png` | Retrato do HUD, fonte e poste |
 
 O jogo roda em 384×216 pixels e é ampliado para a tela, como os jogos de 1993.
@@ -90,7 +105,9 @@ O jogo roda em 384×216 pixels e é ampliado para a tela, como os jogos de 1993.
 As fases ficam em `levels/` e são desenhadas com caracteres, um por bloco de 16×16 px.
 A legenda está no topo de `levels/fase1_estacao_butanta.gd`. Para criar uma fase nova:
 
-1. Copie o arquivo da fase 1 e mude `NAME`, `SUBTITLE`, `SIGNS` (letreiros) e `MAP`.
+1. Copie o arquivo de uma fase e mude `NAME`, `SUBTITLE`, `SIGNS` (letreiros) e `MAP`.
+   Os opcionais `INTERIOR_BG` e `BACKDROP_NEAR` trocam a parede de fundo e o cenário
+   da cidade (veja a fase 2).
 2. Adicione o arquivo na lista `LEVELS` em `scripts/main.gd`.
 
 Dica: o pulo alcança 3 blocos de altura e uns 4 de distância.
@@ -104,7 +121,7 @@ tools/gen_art.py       gerador da pixel art
 scenes/main.tscn       cena principal
 scripts/main.gd        lê o mapa, cria colisões e entidades, controla morte/vitória
 scripts/player.gd      herói: movimento, escada, tiro, dano
-scripts/enemy_*.gd     inimigos (base + segurança, drone, cobra)
+scripts/enemy_*.gd     inimigos (base + segurança, drone, cobra e a chefe Jararaca-X)
 scripts/pickup.gd      itens e saída
 scripts/door.gd        porta de laser
 scripts/hotdog_stand.gd barraquinha de dogão
@@ -116,7 +133,7 @@ scripts/hud.gd         interface no estilo Duke Nukem II
 scripts/pixel_font.gd  fonte pixelada
 scripts/touch_controls.gd  botões na tela do celular
 levels/                mapas das fases
-tests/smoke_test.*     teste automático que joga a fase 1
+tests/smoke_test*.*    testes automáticos que jogam as fases 1 e 2
 docs/GDD.md            documento de design (história, fases, inimigos, ideias)
 ```
 
@@ -124,7 +141,10 @@ docs/GDD.md            documento de design (história, fases, inimigos, ideias)
 
 ```
 godot --path . res://tests/smoke_test.tscn -- /tmp/prints
+godot --path . res://tests/smoke_test_fase2.tscn -- /tmp/prints
 ```
 
-O teste anda, desce a escada do metrô, pega o cartão, abre a porta e chega na saída,
-imprime cada etapa e salva prints na pasta indicada.
+O da fase 1 atira para cima no drone, usa a barraquinha de dogão, desce a escada do
+metrô, pega o cartão, abre a porta e chega na saída. O da fase 2 desce no fosso do
+serpentário, pega o cartão azul, derrota a Jararaca-X e sai. Os dois imprimem cada
+etapa e salvam prints na pasta indicada.
