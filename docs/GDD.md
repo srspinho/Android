@@ -40,7 +40,7 @@ Inspirado no **Duke Nukem II** (1993), com tema cyberpunk:
 |---|---|---|---|
 | 1 | **Estação Butantã** ✅ | Av. Vital Brasil, estação da Linha 4 | Rua bloqueada, descer pelo metrô, cartão vermelho, porta da plataforma |
 | 2 | **Instituto Butantan** ✅ | Instituto Butantan e o serpentário | Parque com fosso do serpentário, laboratório de 2 andares, cartão azul, chefe: **Jararaca-X** |
-| 3 | **Cidade Universitária** | USP, Praça do Relógio, Raia Olímpica | Campus ocupado por drones, saltos sobre a Raia alagada, chefe na Torre do Relógio |
+| 3 | **Cidade Universitária** ✅ | USP, Portão 1, Raia Olímpica, bandejão, Praça do Relógio | Campus tomado por drones, plataformas móveis sobre a Raia, chefe: **CRONOS-X** |
 | 4 | **Morro do Querosene** | Bairro boêmio do Butantã | Becos verticais, telhados, festa de rua com hologramas, mercado negro de implantes |
 | 5 | **Rio Pequeno** | Av. Escola Politécnica, córrego do Rio Pequeno | Favela vertical cyberpunk, elevadores improvisados, córrego tóxico |
 | 6 | **Marginal Pinheiros** | Rio Pinheiros e as pontes | Fase de perseguição em cima de caminhões autônomos, rio radioativo |
@@ -74,6 +74,12 @@ está com menos da metade da vida) e fica mais rápida conforme apanha. Acorda q
 o jogador chega perto ou atira nela, e não volta a dormir. A saída só abre depois que
 ela é derrotada.
 
+**Chefe da fase 3, CRONOS-X** (50 de vida, 8000 pontos): o relógio da Torre virou
+um drone gigante. Voa de um lado para o outro sobre a Praça do Relógio e para no ar
+para disparar rajadas em leque para baixo (é a janela para acertá-lo). Com menos da
+metade da vida, atira 5 balas por rajada e solta até 2 drones. Só o tiro para cima o
+alcança, e mirar para cima também sobe a câmera.
+
 **Planejados:** torreta de teto, motoqueiro com implantes (Marginal), aranha-robô de
 manutenção do metrô, e os chefes de cada fase.
 
@@ -103,7 +109,7 @@ turbinado (velocidade), segredos com bônus como no Duke Nukem.
 
 1. Jogar a demo no celular e ajustar a velocidade, o pulo e o tamanho dos botões
 2. ~~Efeitos sonoros e trilha synthwave~~ ✅ (gerados por `tools/gen_audio.py`)
-3. Fase 3 (Cidade Universitária) e o chefe na Torre do Relógio
+3. Fase 4 (Morro do Querosene)
 4. Tela de título, pausa e salvamento do progresso
 5. Mapa do bairro entre as fases
 6. Mais quadros de animação (tiro, dano, morte) e explosões em pixel art

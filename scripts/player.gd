@@ -28,6 +28,9 @@ const F_JUMP := 4
 const F_CLIMB := [5, 6]
 ## Os quadros 7 a 11 repetem parado/corrida/pulo mirando para cima.
 const F_AIM_UP_OFFSET := 7
+## Mirando para cima, a câmera sobe para mostrar o que está lá em cima.
+const LOOK_UP := 64.0
+const LOOK_SPEED := 220.0
 
 var main
 var max_hp := 8
@@ -51,6 +54,7 @@ var _anim := 0.0
 var _muzzle := 0.0
 var _sprite: Sprite2D
 var _aim_up := false
+var _cam: Camera2D
 
 
 func _ready() -> void:
@@ -72,6 +76,7 @@ func _ready() -> void:
 
 	var size: Vector2i = main.level_pixel_size()
 	var cam := Camera2D.new()
+	_cam = cam
 	# O HUD cobre a direita e a parte de baixo da tela: a câmera compensa
 	# para o herói ficar no meio da área de jogo.
 	cam.position = Vector2(HudScript.PANEL_W / 2.0, -20 + HudScript.BAR_H / 2.0)
@@ -120,6 +125,7 @@ func _physics_process(delta: float) -> void:
 
 	# Segurar para cima (fora da escada) mira o blaster para o alto.
 	_aim_up = vdir < -0.5 and not _climbing
+	_cam.offset.y = move_toward(_cam.offset.y, -LOOK_UP if _aim_up else 0.0, LOOK_SPEED * delta)
 	var dropping := global_position.y < _drop_until_y
 	collision_mask = MASK_PASS if (_climbing or dropping) else MASK_NORMAL
 	move_and_slide()

@@ -637,7 +637,7 @@ def gen_portrait():
 TILE_NAMES = [
     "floor_top", "panel", "crate", "vent", "ceiling", "girder", "catwalk", "ladder",
     "sludge0", "sludge1", "sludge2", "sludge3", "rail0", "rail1", "pillar", "deep",
-    "metro",
+    "metro", "water0", "water1", "water2", "water3",
 ]
 
 
@@ -789,6 +789,23 @@ def tile_pillar():
     return t
 
 
+def tile_water(frame):
+    """Água (contaminada) da Raia Olímpica: azul com reflexos ciano."""
+    t = new(16, 16)
+    for x in range(16):
+        top = 3 + round(math.sin((x + frame * 4) * 0.5) * 1.3)
+        for y in range(top, 16):
+            if y == top:
+                c = "c"
+            else:
+                c = dither_pick(x + frame * 2, y, (y - top) / 13, "b", "B")
+            rect(t, x, y, 1, 1, c)
+    random.seed(frame * 3 + 11)
+    for _ in range(3):
+        rect(t, random.randint(1, 13), random.randint(7, 14), 2, 1, "c")
+    return t
+
+
 def tile_deep():
     t = new(16, 16)
     for y in range(16):
@@ -813,6 +830,7 @@ def gen_tiles():
         tile_girder(), tile_catwalk(), tile_ladder(),
         tile_sludge(0), tile_sludge(1), tile_sludge(2), tile_sludge(3),
         tile_rail(0), tile_rail(1), tile_pillar(), tile_deep(), tile_metro(),
+        tile_water(0), tile_water(1), tile_water(2), tile_water(3),
     ]
     img = new(16 * len(tiles), 16)
     for i, t in enumerate(tiles):
@@ -1199,6 +1217,114 @@ def gen_butantan_backdrop():
     img.save(os.path.join(ROOT, "bg_butantan.png"))
 
 
+# --- Fase 3: Cidade Universitária -------------------------------------------------
+
+def gen_platform():
+    """Plataforma móvel 48x20 (3 blocos) com propulsores; 2 quadros de chama."""
+    img = new(96, 20)
+    for f in range(2):
+        o = f * 48
+        rect(img, o, 0, 48, 1, "w")
+        rect(img, o, 1, 48, 2, "l")
+        rect(img, o, 3, 48, 1, "d")
+        hazard(img, o, 4, 48, 4)
+        rect(img, o, 8, 48, 1, "k")
+        rect(img, o + 2, 9, 44, 4, "D")
+        for tx in (8, 36):
+            rect(img, o + tx, 9, 5, 4, "g")
+            rect(img, o + tx, 9, 5, 1, "l")
+            flame = 4 if f == 0 else 6
+            rect(img, o + tx + 1, 13, 3, flame, "c")
+            rect(img, o + tx + 2, 13, 1, flame - 1, "w")
+        rect(img, o + 22, 10, 4, 2, "r" if f == 0 else "R")
+    img.save(os.path.join(ROOT, "platform.png"))
+
+
+def clock_frame(hand_angle, angry=False):
+    """CRONOS-X: o relógio da torre virou um drone gigante (64x48)."""
+    img = new(64, 48)
+    cx, cy, r = 32, 26, 19
+    # Rotores
+    for rx in (10, 54):
+        rect(img, rx - 1, 4, 3, 6, "d")
+        span = 9 if hand_angle % 2 < 1 else 5
+        rect(img, rx - span, 3, span * 2, 1, "l")
+    rect(img, 9, 8, 46, 3, "d")
+    rect(img, 9, 8, 46, 1, "g")
+    # Caixa do relógio
+    disc(img, cx, cy, r + 2, "Y")
+    disc(img, cx, cy - 1, r + 1, "y")
+    face = (252, 170, 170) if angry else PAL["w"]
+    disc(img, cx, cy, r - 2, face)
+    for i in range(12):
+        a = i * math.pi / 6
+        px = cx + round(math.cos(a) * (r - 4))
+        py = cy + round(math.sin(a) * (r - 4))
+        rect(img, px, py, 1 if i % 3 else 2, 1 if i % 3 else 2, "k")
+    for length, ang in ((r - 6, hand_angle), (r - 10, hand_angle * 0.3 + 1.0)):
+        for t in range(length):
+            rect(img, cx + round(math.cos(ang) * t), cy + round(math.sin(ang) * t), 1, 1, "k")
+    disc(img, cx, cy, 4, "R")
+    disc(img, cx, cy, 2, "r")
+    rect(img, cx - 1, cy - 1, 1, 1, "w")
+    # Canhões e luz de baixo
+    for gx in (12, 48):
+        rect(img, gx - 2, 38, 5, 6, "d")
+        rect(img, gx - 2, 38, 5, 1, "g")
+        rect(img, gx - 1, 44, 3, 2, "R" if angry else "D")
+    rect(img, 22, 44, 20, 2, "H")
+    add_outline(img)
+    return img
+
+
+def gen_clock_boss():
+    img = new(192, 48)
+    img.alpha_composite(clock_frame(0.4), (0, 0))
+    img.alpha_composite(clock_frame(1.9), (64, 0))
+    img.alpha_composite(clock_frame(3.3, angry=True), (128, 0))
+    img.save(os.path.join(ROOT, "boss_clock.png"))
+
+
+def gen_usp_backdrop():
+    """Camada próxima da fase 3: prédios de concreto sobre pilotis, árvores
+    do campus e o letreiro da USP."""
+    W, H = 512, 216
+    img = new(W, H)
+    rng = random.Random(8)
+    concrete, dark = (78, 70, 96), (52, 46, 66)
+    x = 10
+    while x < W - 40:
+        w = rng.randint(70, 120)
+        top = rng.randint(100, 140)
+        base = top + rng.randint(40, 55)
+        rect(img, x, top, w, base - top, (*concrete, 255))
+        rect(img, x, top, w, 2, (110, 100, 130, 255))
+        for wy in range(top + 6, base - 4, 9):
+            rect(img, x + 3, wy, w - 6, 4, (*dark, 255))
+            for wx in range(x + 4, x + w - 6, 6):
+                if rng.random() < 0.35:
+                    c = rng.choice([(252, 220, 120), (84, 252, 252), (252, 84, 252)])
+                    rect(img, wx, wy + 1, 4, 2, (*c, 255))
+        for px in range(x + 6, x + w - 4, 16):  # pilotis
+            rect(img, px, base, 4, H - base, (*dark, 255))
+        x += w + rng.randint(20, 40)
+    for tx in range(20, W, 47):  # árvores
+        cy = H - rng.randint(28, 44)
+        rect(img, tx, cy, 3, H - cy, (40, 26, 30, 255))
+        for _ in range(160):
+            a = rng.random() * math.tau
+            d = math.sqrt(rng.random()) * 15
+            rect(img, tx + 1 + round(math.cos(a) * d * 1.3), cy + round(math.sin(a) * d * 0.8),
+                 2, 2, (12, 64, 40, 255) if rng.random() < 0.7 else (24, 100, 56, 255))
+    rect(img, 236, 70, 40, 18, (10, 4, 20, 255))
+    for xx in range(236, 276):
+        rect(img, xx, 70, 1, 1, PAL["y"] + (255,))
+        rect(img, xx, 87, 1, 1, PAL["y"] + (255,))
+    text(img, 247, 76, "USP", "y")
+    rect(img, 254, 88, 4, 40, (10, 4, 20, 255))
+    img.save(os.path.join(ROOT, "bg_usp.png"))
+
+
 def main():
     os.makedirs(ROOT, exist_ok=True)
     gen_font()
@@ -1210,6 +1336,9 @@ def main():
     gen_plant()
     gen_lab_backdrop()
     gen_butantan_backdrop()
+    gen_platform()
+    gen_clock_boss()
+    gen_usp_backdrop()
     gen_portrait()
     gen_tiles()
     gen_tech_backdrop()

@@ -8,19 +8,22 @@ const TILE := 16
 const LEVELS := [
 	preload("res://levels/fase1_estacao_butanta.gd"),
 	preload("res://levels/fase2_instituto_butantan.gd"),
+	preload("res://levels/fase3_cidade_universitaria.gd"),
 ]
 
 ## Caracteres do mapa que viram colisão.
 const SOLID := "#="
 const ONE_WAY := "-"
 const LADDER := "H"
-const HAZARD := "~^"
+const HAZARD := "~^w"
 
 const PlayerScript := preload("res://scripts/player.gd")
 const GuardScript := preload("res://scripts/enemy_guard.gd")
 const DroneScript := preload("res://scripts/enemy_drone.gd")
 const SnakeScript := preload("res://scripts/enemy_snake.gd")
 const BossScript := preload("res://scripts/enemy_boss.gd")
+const ClockBossScript := preload("res://scripts/enemy_boss_clock.gd")
+const PlatformScript := preload("res://scripts/moving_platform.gd")
 const PickupScript := preload("res://scripts/pickup.gd")
 const DoorScript := preload("res://scripts/door.gd")
 const HotdogScript := preload("res://scripts/hotdog_stand.gd")
@@ -254,6 +257,18 @@ func _spawn_entities() -> void:
 					_spawn(HotdogScript, feet)
 				"J":
 					_spawn(BossScript, feet)
+				"X":
+					_spawn(ClockBossScript, center)
+				"m":
+					if char_at(x - 1, y) != "m":
+						var plat = PlatformScript.new()
+						plat.main = self
+						plat.position = Vector2(x * TILE, y * TILE)
+						var w := 0
+						while char_at(x + w, y) == "m":
+							w += 1
+						plat.width_cells = w
+						world.add_child(plat)
 				"K", "U", "+", "W", "*", "E":
 					var p = PickupScript.new()
 					p.kind = c
@@ -320,7 +335,7 @@ func level_complete() -> void:
 		hud.show_overlay("FASE CONCLUÍDA!", "Toque ou aperte ENTER\npara continuar")
 	else:
 		_next_action = "end"
-		hud.show_overlay("FIM DA DEMO!", "Fase 3 – Cidade Universitária – em construção.\n\nToque ou aperte ENTER\npara jogar de novo")
+		hud.show_overlay("FIM DA DEMO!", "Fase 4 – Morro do Querosene – em construção.\n\nToque ou aperte ENTER\npara jogar de novo")
 
 
 func on_boss_defeated() -> void:

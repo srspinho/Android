@@ -19,11 +19,18 @@ embaixo), laboratório de dois andares da Serpentis, cartão azul e a luta contr
 chefe **JARARACA-X**, uma cobra gigante que rasteja, se ergue e cospe veneno. A saída
 só abre depois que ela é derrotada.
 
+**Fase 3 – Cidade Universitária:** Portão 1 da USP, biblioteca sobre pilotis com o
+cartão vermelho no terraço, a Raia Olímpica atravessada em **plataformas móveis**,
+o bandejão com barraquinha de dogão e, na Praça do Relógio, o chefe **CRONOS-X**: o
+relógio da torre virou um drone gigante. Ele voa sobre a praça e só o tiro para cima
+o alcança.
+
 Em todo o jogo:
 
 - Herói (Duca Neon) que anda, pula (com pulo curto/longo), sobe escadas, desce de plataformas e atira
 - Inimigos: androide de segurança, drone de vigilância e cobra cibernética
-- Tiro para cima (segure ↑), para derrubar os drones
+- Tiro para cima (segure ↑), para derrubar os drones; mirando para cima, a câmera
+  também sobe para mostrar o que vem lá de cima
 - Barraquinhas de dogão que enchem a energia (e fecham por 30 s depois de servir)
 - Itens: coxinha energética (vida), cartão de acesso vermelho, turbo no blaster, chips de dados (pontos)
 - Porta de laser que só abre com o cartão, lodo tóxico, trilho energizado
@@ -95,10 +102,12 @@ e o contorno preto é colocado automaticamente. Para mudar um desenho:
 | `guard.png`, `drone.png`, `snake.png` | Inimigos (2 quadros cada) |
 | `items.png`, `exit.png` | Itens (coxinha, cartões, turbo, chip) e porta de saída |
 | `boss.png` | JARARACA-X: 2 quadros rastejando e 1 erguida cuspindo (80×48) |
+| `boss_clock.png` | CRONOS-X: 2 quadros voando e 1 atacando (64×48) |
+| `platform.png` | Plataforma móvel com propulsores (2 quadros) |
 | `plant.png` | Planta tropical decorativa |
 | `hotdog.png` | Barraquinha de dogão (aberta e fechada) |
 | `tiles.png` | Blocos 16×16 (a ordem está em `scripts/level_art.gd`) |
-| `bg_*.png` | Fundos: céu, prédios distantes, camada próxima de cada fase (`bg_near`, `bg_butantan`) e paredes internas (`bg_tech`, `bg_lab`) |
+| `bg_*.png` | Fundos: céu, prédios distantes, camada próxima de cada fase (`bg_near`, `bg_butantan`, `bg_usp`) e paredes internas (`bg_tech`, `bg_lab`) |
 | `portrait.png`, `font.png`, `lamp.png` | Retrato do HUD, fonte e poste |
 
 O jogo roda em 384×216 pixels e é ampliado para a tela, como os jogos de 1993.
@@ -140,9 +149,11 @@ tools/gen_art.py       gerador da pixel art
 scenes/main.tscn       cena principal
 scripts/main.gd        lê o mapa, cria colisões e entidades, controla morte/vitória
 scripts/player.gd      herói: movimento, escada, tiro, dano
-scripts/enemy_*.gd     inimigos (base + segurança, drone, cobra e a chefe Jararaca-X)
+scripts/enemy_*.gd     inimigos (base + segurança, drone, cobra e os chefes Jararaca-X e CRONOS-X)
 scripts/pickup.gd      itens e saída
 scripts/door.gd        porta de laser
+scripts/moving_platform.gd plataforma móvel
+scripts/boss_base.gd   base dos chefes (vida, barra, música, saída travada)
 scripts/hotdog_stand.gd barraquinha de dogão
 scripts/level_art.gd   desenho dos blocos, parede de fundo, escadas e letreiros
 scripts/hazard_art.gd  lodo tóxico e trilho energizado animados
@@ -155,7 +166,7 @@ audio/                 sons (WAV) gerados por tools/gen_audio.py
 tools/gen_audio.py     gerador dos sons e músicas
 scripts/touch_controls.gd  botões na tela do celular
 levels/                mapas das fases
-tests/smoke_test*.*    testes automáticos que jogam as fases 1 e 2
+tests/smoke_test*.*    testes automáticos que jogam as fases 1, 2 e 3
 docs/GDD.md            documento de design (história, fases, inimigos, ideias)
 ```
 
@@ -164,9 +175,12 @@ docs/GDD.md            documento de design (história, fases, inimigos, ideias)
 ```
 godot --path . res://tests/smoke_test.tscn -- /tmp/prints
 godot --path . res://tests/smoke_test_fase2.tscn -- /tmp/prints
+godot --path . res://tests/smoke_test_fase3.tscn -- /tmp/prints
 ```
 
 O da fase 1 atira para cima no drone, usa a barraquinha de dogão, desce a escada do
 metrô, pega o cartão, abre a porta e chega na saída. O da fase 2 desce no fosso do
-serpentário, pega o cartão azul, derrota a Jararaca-X e sai. Os dois imprimem cada
+serpentário, pega o cartão azul, derrota a Jararaca-X e sai. O da fase 3 sobe na
+biblioteca, pega carona na plataforma móvel, testa a água da Raia e derruba o CRONOS-X
+com tiro para cima. Todos imprimem cada
 etapa e salvam prints na pasta indicada.

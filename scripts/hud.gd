@@ -214,19 +214,24 @@ func _draw_blaster(o: Vector2, turbo: bool) -> void:
 
 # --- Textos na área de jogo -------------------------------------------------
 
-## Barra de vida do chefe, no alto da tela, quando ele está perto.
+## Barra de vida do chefe, numa linha fina no topo da tela, quando ele está perto.
 func _draw_boss_bar(play: Rect2) -> void:
 	if not main.boss_alive():
 		return
 	var b = main.boss
 	if b.global_position.distance_to(main.player.global_position) > b.active_range:
 		return
-	var w := minf(play.size.x - 40, 200.0)
-	var r := Rect2(roundf(play.get_center().x - w / 2.0), play.end.y - 14, w, 6)
-	PixelFont.draw_centered(_canvas, r.get_center().x, r.position.y - 10, b.display_name, C_GREEN)
+	var label: String = b.display_name
+	var lw := PixelFont.width(label)
+	var w := minf(play.size.x - lw - 30, 200.0)
+	var x := roundf(play.get_center().x - (lw + 6 + w) / 2.0)
+	_canvas.draw_rect(Rect2(x - 4, 0, lw + w + 14, 10), Color(0, 0, 0, 0.6))
+	PixelFont.draw(_canvas, Vector2(x, 2), label, C_GREEN)
+	var r := Rect2(x + lw + 6, 3, w, 4)
 	_box(r)
 	_canvas.draw_rect(Rect2(r.position, Vector2(r.size.x * b.hp / b.max_hp, r.size.y)), Color("#00a800"))
-	_canvas.draw_rect(Rect2(r.position, Vector2(r.size.x * b.hp / b.max_hp, 2)), C_GREEN)
+	_canvas.draw_rect(Rect2(r.position, Vector2(r.size.x * b.hp / b.max_hp, 1)), C_GREEN)
+
 
 func _draw_play_texts(play: Rect2) -> void:
 	var cx := play.get_center().x
@@ -240,8 +245,8 @@ func _draw_play_texts(play: Rect2) -> void:
 	if _msg_t > 0.0:
 		var ma := clampf(_msg_t, 0.0, 1.0)
 		var mw := PixelFont.width(_msg) + 12
-		_canvas.draw_rect(Rect2(roundf(cx - mw / 2.0), 9, mw, 15), Color(0, 0, 0, 0.7 * ma))
-		PixelFont.draw_centered(_canvas, cx, 13, _msg, Color(1, 1, 1, ma))
+		_canvas.draw_rect(Rect2(roundf(cx - mw / 2.0), 13, mw, 15), Color(0, 0, 0, 0.7 * ma))
+		PixelFont.draw_centered(_canvas, cx, 17, _msg, Color(1, 1, 1, ma))
 	if _overlay_t >= 0.0:
 		var k := clampf(_overlay_t * 2.0, 0.0, 1.0)
 		_canvas.draw_rect(play, Color(0.02, 0.0, 0.06, 0.75 * k))

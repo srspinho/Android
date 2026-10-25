@@ -7,5 +7,5 @@
   edite o gerador e rode `python3 tools/gen_art.py` em vez de editar os PNGs à mão.
 - Sons em `audio/`, gerados por `tools/gen_audio.py` (precisa de numpy).
 - Fases em `levels/` (mapa de caracteres; a legenda está no topo de cada arquivo).
-- Testes: `godot --path . res://tests/smoke_test.tscn -- <pasta>` e
-  `godot --path . res://tests/smoke_test_fase2.tscn -- <pasta>`.
+- Testes: `godot --path . res://tests/smoke_test.tscn -- <pasta>`,
+  `smoke_test_fase2.tscn` e `smoke_test_fase3.tscn` (rodar com tela, ex.: xvfb-run).
