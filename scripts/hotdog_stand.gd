@@ -38,6 +38,7 @@ func _physics_process(delta: float) -> void:
 		p.heal(p.max_hp)
 		_closed = COOLDOWN
 		main.hud.show_message("Dogão completo! Energia no máximo")
+		Audio.sfx("hotdog")
 		main.spawn_fx(global_position + Vector2(0, -24), Color("#fcfc54"), 14.0)
 
 

@@ -15,6 +15,9 @@ extends RefCounted
 const NAME := "ESTAÇÃO BUTANTÃ"
 const SUBTITLE := "Av. Vital Brasil, 2087.\nA Serpentis Biotech fechou a rua.\nDesça pelo metrô!"
 
+## Música da fase (arquivo em audio/music, gerado por tools/gen_audio.py).
+const MUSIC := "fase1"
+
 const SIGNS := [
 	{"pos": Vector2i(2, 5), "text": "AV. VITAL BRASIL", "color": "00f0ff", "size": 11},
 	{"pos": Vector2i(38, 9), "text": "MORRO DO QUEROSENE", "color": "ff2bd6", "size": 9},

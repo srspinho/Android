@@ -79,6 +79,7 @@ func _ready() -> void:
 	add_child(hud)
 	add_child(TouchScript.new())
 	hud.show_banner(level.NAME, level.SUBTITLE)
+	Audio.music(level_const("MUSIC", "fase1"))
 
 
 func _physics_process(_delta: float) -> void:
@@ -89,6 +90,8 @@ func _physics_process(_delta: float) -> void:
 
 
 func _process(_delta: float) -> void:
+	if Input.is_action_just_pressed("toggle_music"):
+		hud.show_message("Música ligada" if Audio.toggle_music() else "Música desligada")
 	if not _finished or hud.overlay_time() < 0.8:
 		return
 	for action in ["restart", "jump", "shoot"]:
@@ -310,6 +313,8 @@ func level_complete() -> void:
 		return
 	_finished = true
 	player.frozen = true
+	Audio.stop_music()
+	Audio.sfx("level_complete")
 	if current_level + 1 < LEVELS.size():
 		_next_action = "next"
 		hud.show_overlay("FASE CONCLUÍDA!", "Toque ou aperte ENTER\npara continuar")
@@ -318,7 +323,13 @@ func level_complete() -> void:
 		hud.show_overlay("FIM DA DEMO!", "Fase 3 – Cidade Universitária – em construção.\n\nToque ou aperte ENTER\npara jogar de novo")
 
 
+func on_boss_defeated() -> void:
+	Audio.music(level_const("MUSIC", "fase1"))
+
+
 func _on_player_died() -> void:
+	Audio.stop_music()
+	Audio.sfx("death")
 	_finished = true
 	_next_action = "retry"
 	hud.show_overlay("SISTEMA DESLIGADO", "Toque ou aperte ENTER\npara tentar de novo")
@@ -345,6 +356,7 @@ func _setup_input() -> void:
 		"jump": [KEY_SPACE, KEY_Z, KEY_K],
 		"shoot": [KEY_X, KEY_J, KEY_CTRL],
 		"restart": [KEY_ENTER, KEY_R],
+		"toggle_music": [KEY_M],
 	}
 	var pad := {
 		"move_left": JOY_BUTTON_DPAD_LEFT,
@@ -354,6 +366,7 @@ func _setup_input() -> void:
 		"jump": JOY_BUTTON_A,
 		"shoot": JOY_BUTTON_X,
 		"restart": JOY_BUTTON_START,
+		"toggle_music": JOY_BUTTON_BACK,
 	}
 	for action in keys:
 		if InputMap.has_action(action):

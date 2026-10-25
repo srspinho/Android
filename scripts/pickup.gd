@@ -66,21 +66,27 @@ func _on_body_entered(body: Node) -> void:
 	match kind:
 		"+":
 			body.heal(2)
+			Audio.sfx("health")
 			main.hud.show_message("Coxinha energética! +2 de energia")
 		"K":
 			body.keycards["red"] = true
+			Audio.sfx("card")
 			main.hud.show_message("Cartão de acesso VERMELHO obtido!")
 		"U":
 			body.keycards["blue"] = true
+			Audio.sfx("card")
 			main.hud.show_message("Cartão de acesso AZUL obtido!")
 		"W":
 			body.rapid_fire = 15.0
+			Audio.sfx("powerup")
 			main.hud.show_message("Turbo no blaster: tiro rápido por 15 s")
 		"*":
 			main.add_score(250)
+			Audio.sfx("pickup")
 		"E":
 			if main.boss_alive():
-				main.hud.show_message("Saída travada: derrote a JARARACA-X!")
+				main.hud.show_message("Saída travada: derrote %s!" % main.boss.display_name)
+				Audio.sfx("denied")
 			return
 	main.spawn_fx(global_position, _glow(), 10.0)
 	queue_free()

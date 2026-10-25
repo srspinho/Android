@@ -102,7 +102,7 @@ turbinado (velocidade), segredos com bônus como no Duke Nukem.
 ## Próximos passos
 
 1. Jogar a demo no celular e ajustar a velocidade, o pulo e o tamanho dos botões
-2. Efeitos sonoros e trilha synthwave
+2. ~~Efeitos sonoros e trilha synthwave~~ ✅ (gerados por `tools/gen_audio.py`)
 3. Fase 3 (Cidade Universitária) e o chefe na Torre do Relógio
 4. Tela de título, pausa e salvamento do progresso
 5. Mapa do bairro entre as fases

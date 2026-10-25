@@ -223,10 +223,10 @@ func _draw_boss_bar(play: Rect2) -> void:
 		return
 	var w := minf(play.size.x - 40, 200.0)
 	var r := Rect2(roundf(play.get_center().x - w / 2.0), play.end.y - 14, w, 6)
-	PixelFont.draw_centered(_canvas, r.get_center().x, r.position.y - 10, "JARARACA-X", C_GREEN)
+	PixelFont.draw_centered(_canvas, r.get_center().x, r.position.y - 10, b.display_name, C_GREEN)
 	_box(r)
-	_canvas.draw_rect(Rect2(r.position, Vector2(r.size.x * b.hp / b.MAX_HP, r.size.y)), Color("#00a800"))
-	_canvas.draw_rect(Rect2(r.position, Vector2(r.size.x * b.hp / b.MAX_HP, 2)), C_GREEN)
+	_canvas.draw_rect(Rect2(r.position, Vector2(r.size.x * b.hp / b.max_hp, r.size.y)), Color("#00a800"))
+	_canvas.draw_rect(Rect2(r.position, Vector2(r.size.x * b.hp / b.max_hp, 2)), C_GREEN)
 
 func _draw_play_texts(play: Rect2) -> void:
 	var cx := play.get_center().x

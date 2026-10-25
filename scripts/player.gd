@@ -164,6 +164,7 @@ func _process_move(delta: float, dir: float, vdir: float) -> void:
 			_drop_until_y = global_position.y + 6.0 + 28.0 + 2.0
 		else:
 			velocity.y = JUMP_VELOCITY
+			Audio.sfx("jump")
 
 	# Soltar o botão de pulo cedo faz um pulo mais baixo.
 	if velocity.y < 0.0 and not Input.is_action_pressed("jump"):
@@ -178,6 +179,7 @@ func _process_move(delta: float, dir: float, vdir: float) -> void:
 func _shoot() -> void:
 	_shoot_cd = 0.11 if rapid_fire > 0.0 else 0.3
 	_muzzle = 0.06
+	Audio.sfx("shoot")
 	var b = BulletScript.new()
 	b.main = main
 	b.from_player = true
@@ -200,6 +202,7 @@ func hurt(amount: int) -> void:
 	_climbing = false
 	velocity = Vector2(-facing * 100.0, -160.0)
 	main.spawn_fx(global_position + Vector2(0, -14), Color("#ff2bd6"), 10.0)
+	Audio.sfx("hurt")
 	if hp == 0:
 		dead = true
 		main.spawn_fx(global_position + Vector2(0, -14), Color("#54fcfc"), 24.0)

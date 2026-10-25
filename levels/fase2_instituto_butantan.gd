@@ -12,6 +12,9 @@ const SUBTITLE := "A Serpentis transformou o serpentário\nnuma fábrica de cobr
 const INTERIOR_BG := "res://art/bg_lab.png"
 const BACKDROP_NEAR := "res://art/bg_butantan.png"
 
+## Música da fase (arquivo em audio/music, gerado por tools/gen_audio.py).
+const MUSIC := "fase2"
+
 const SIGNS := [
 	{"pos": Vector2i(2, 5), "text": "INSTITUTO BUTANTAN", "color": "54fc54"},
 	{"pos": Vector2i(20, 9), "text": "SERPENTÁRIO", "color": "fcfc54"},

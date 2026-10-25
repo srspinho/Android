@@ -38,10 +38,12 @@ func _on_touch(body: Node) -> void:
 		return
 	if body.keycards.get(card, false):
 		main.hud.show_message("Acesso liberado!")
+		Audio.sfx("door_open")
 		main.spawn_fx(global_position + Vector2(0, _height / 2.0), _laser(1.0), 20.0)
 		queue_free()
 	else:
 		main.hud.show_message("Acesso negado: precisa do CARTÃO %s" % ("AZUL" if card == "blue" else "VERMELHO"))
+		Audio.sfx("denied")
 
 
 func _laser(alpha: float) -> Color:

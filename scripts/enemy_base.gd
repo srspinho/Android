@@ -72,7 +72,10 @@ func hurt(amount: int) -> void:
 	if hp <= 0:
 		main.add_score(points)
 		main.spawn_fx(global_position + contact_offset, body_color, 16.0)
+		Audio.sfx("explode")
 		queue_free()
+	else:
+		Audio.sfx("hit")
 
 
 func shoot(dir: Vector2, from: Vector2):
@@ -82,6 +85,7 @@ func shoot(dir: Vector2, from: Vector2):
 	b.direction = dir.normalized()
 	b.position = global_position + from
 	main.world.add_child(b)
+	Audio.sfx("enemy_shoot", -6.0)
 	return b
 
 

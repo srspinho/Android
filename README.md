@@ -33,6 +33,8 @@ Em todo o jogo:
 - HUD com moldura de canos: itens, retrato do herói, radar de inimigos, fase, pontos,
   arma e energia
 - Fonte pixelada própria (com acentos) e controles de toque na tela
+- Efeitos sonoros e trilha synthwave/chiptune para cada fase, mais a música dos chefes
+  (tecla **M** liga e desliga a música)
 
 ## Como abrir e jogar no PC
 
@@ -49,6 +51,7 @@ Em todo o jogo:
 | Atirar para cima | ↑ + Atirar | Cima + X |
 | Descer da plataforma | ↓ + Pular | Baixo + A |
 | Continuar/reiniciar | Enter ou R | Start |
+| Ligar/desligar música | M | Select |
 
 No celular, o direcional da esquerda é analógico, com 8 direções. Arrastando o dedo
 na diagonal, dá para andar e mirar para cima ao mesmo tempo.
@@ -100,6 +103,22 @@ e o contorno preto é colocado automaticamente. Para mudar um desenho:
 
 O jogo roda em 384×216 pixels e é ampliado para a tela, como os jogos de 1993.
 
+## Sons e músicas (pasta `audio/`)
+
+Todos os sons são sintetizados pelo script `tools/gen_audio.py`, que precisa do Python 3
+com `pip install numpy`. São ondas quadradas, dente-de-serra e ruído, como nos chips
+de som dos anos 90.
+
+- **Efeitos** (`audio/sfx/`): tiro, pulo, explosão, dano, itens, cartão, porta, dogão,
+  chefe, fim de fase e morte. Cada um é uma função `sfx_*` no script.
+- **Músicas** (`audio/music/`): `fase1`, `fase2`, `fase3` e `boss`. Cada uma está descrita
+  em `TRACKS`, com andamento (bpm), tom, acordes, baixo, arpejo e bateria (`x` = toca).
+  A melodia é sorteada a partir de `seed`: troque o número para ouvir outra.
+
+Depois de mudar, rode `python3 tools/gen_audio.py`. As músicas tocam em loop: isso está
+configurado nos arquivos `.import` delas (Godot, aba Importar → Loop Mode: Forward).
+Cada fase escolhe sua música pela constante `MUSIC` no arquivo da fase.
+
 ## Como criar ou editar fases
 
 As fases ficam em `levels/` e são desenhadas com caracteres, um por bloco de 16×16 px.
@@ -131,6 +150,9 @@ scripts/background.gd  céu e prédios com parallax
 scripts/rain.gd        chuva
 scripts/hud.gd         interface no estilo Duke Nukem II
 scripts/pixel_font.gd  fonte pixelada
+scripts/audio.gd       efeitos e música (autoload "Audio")
+audio/                 sons (WAV) gerados por tools/gen_audio.py
+tools/gen_audio.py     gerador dos sons e músicas
 scripts/touch_controls.gd  botões na tela do celular
 levels/                mapas das fases
 tests/smoke_test*.*    testes automáticos que jogam as fases 1 e 2
