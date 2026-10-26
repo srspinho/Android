@@ -45,7 +45,7 @@ Em todo o jogo:
 
 ## Como abrir e jogar no PC
 
-1. Baixe o **Godot 4.3** (versão padrão, não a .NET): https://godotengine.org/download
+1. Baixe o **Godot 4.7** (versão padrão, não a .NET): https://godotengine.org/download
 2. Abra o Godot, clique em **Importar** e escolha o arquivo `project.godot` desta pasta.
 3. Aperte **F5** para jogar.
 
@@ -66,24 +66,57 @@ na diagonal, dá para andar e mirar para cima ao mesmo tempo.
 Para ver os controles de toque no PC, em **Depurar → Personalizar argumentos de execução**
 coloque `-- --touch`. O mouse simula o dedo.
 
-## Como gerar o APK para Android
+## Como gerar o APK para Android (Windows)
 
-Só é preciso fazer uma vez:
+O projeto usa o **Godot 4.7**. Os passos 1 a 4 são feitos uma vez só.
 
-1. Instale o **JDK 17** (por exemplo, o OpenJDK da Adoptium) e o **Android SDK**
-   (o jeito mais fácil é instalar o Android Studio).
-2. No Godot: **Editor → Configurações do Editor → Exportar → Android**, e informe o
-   caminho do Java SDK e do Android SDK.
-3. **Editor → Gerenciar Modelos de Exportação → Baixar e Instalar**.
+**1. Android SDK (pelo Android Studio)**
 
-Depois disso:
+1. Instale o Android Studio: https://developer.android.com/studio
+2. Abra o Android Studio e vá em **More Actions → SDK Manager**. Se já houver um
+   projeto aberto, o caminho é **Tools → SDK Manager**.
+3. Na aba **SDK Platforms**, marque a versão mais nova do Android (por exemplo, Android 15
+   / API 35).
+4. Na aba **SDK Tools**, marque **Show Package Details** (canto de baixo) e instale:
+   - **Android SDK Build-Tools**: marque a versão mais nova, por exemplo 35.0.1. Sem
+     ela aparece o erro *"Unable to open Android 'build-tools' directory"*.
+   - **Android SDK Command-line Tools (latest)**
+   - **Android SDK Platform-Tools**
+5. Clique em **Apply** e espere baixar.
+6. Anote o caminho que aparece no alto, em **Android SDK Location**. Normalmente é
+   `C:\Users\SEU_USUARIO\AppData\Local\Android\Sdk`.
 
-4. **Projeto → Exportar…** O preset "Android" já está configurado.
-5. Clique em **Exportar Projeto** para gerar `build/NeonButanta.apk`.
-6. Copie o APK para o celular e instale (é preciso permitir "fontes desconhecidas").
+**2. Java (JDK 17)**
 
-Também dá para ligar o celular no USB com a **Depuração USB** ativa. Aí aparece um
-ícone do Android no canto do editor, e um clique instala e roda o jogo direto no aparelho.
+Instale o **Temurin JDK 17** em https://adoptium.net (escolha a versão 17 LTS, Windows,
+.msi). Ele fica em algo como `C:\Program Files\Eclipse Adoptium\jdk-17.0.xx-hotspot`.
+
+**3. Configurar o Godot**
+
+1. **Editor → Configurações do Editor → Exportar → Android**:
+   - **Java SDK Path**: a pasta do JDK 17 do passo 2.
+   - **Android SDK Path**: a pasta anotada no passo 1.
+2. Feche e abra o Godot de novo.
+
+**4. Modelos de exportação**
+
+**Editor → Gerenciar Modelos de Exportação → Baixar e Instalar** (cerca de 1 GB).
+
+**5. Gerar o APK**
+
+1. **Projeto → Exportar…** O preset "Android" já está configurado.
+2. Clique em **Exportar Projeto** e salve como `NeonButanta.apk`.
+3. Copie o APK para o celular e abra para instalar. É preciso permitir "instalar apps
+   de fontes desconhecidas" quando o Android pedir.
+
+Também dá para ligar o celular no USB com a **Depuração USB** ativa (em Opções do
+desenvolvedor). Aí aparece um ícone do Android no canto do editor, e um clique instala
+e roda o jogo direto no aparelho.
+
+**Se aparecer "Unrecognized UID" ou "Failed to create an autoload"**: baixe a versão
+nova do projeto numa **pasta nova**, sem copiar por cima da antiga. Se preferir
+consertar à mão: **Projeto → Configurações do Projeto → Globais → Autoload**, remova
+`Audio` e adicione de novo `res://scripts/audio.gd` com o nome `Audio`.
 
 ## Gráficos (pasta `art/`)
 
